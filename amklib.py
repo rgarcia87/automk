@@ -89,6 +89,9 @@ def fgas(gas,int,cat):
     # Process adsorption and desorptions 
     for item in sorted(gas) : 
         
+        # Adsorption energy 
+        DGads=int[item][cat]-gas[item][cat]
+         
         # Activation energy of adsorption
         aGads=gas[item][cat]-gas[item]['gas'] 
         
@@ -96,18 +99,19 @@ def fgas(gas,int,cat):
         aGdes=gas[item][cat]-gas[item]['gas']
         
         # Kinetic constant: adsorption of gas to cat
-        gas[item]["kads"+cat]="kads"+item+cat+":=evalf(101325*P"+item+"*exp(-"+\
-                              "{:.6f}".format(aGads)+\
-                              "/(0.861733E-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*"+\
+        gas[item]["kads"+cat]="kads"+item+cat+":=evalf(101325*P"+item+"*exp(-max("+\
+                              "0.00,"+"{:.6f}".format(aGads)+","+"{:.6f}".format(DGads)+\
+                              ")/(0.861733E-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+"{:.2f}".format(gas[item]['mw'])+\
                               "*10^(-27)))) : " 
-        
+         
         # Kinetic constant: desorption of volatile species from cat to gas. 
-        gas[item]["kdes"+cat]="kdes"+item+cat+":=evalf("+kbh+"*T*exp("+\
-                              "{:.6f}".format(aGdes)+"/("+kbev+"*T)) ): "
+        gas[item]["kdes"+cat]="kdes"+item+cat+":=evalf("+kbh+"*T*exp(-max("+\
+                              "0.00,"+"{:.6f}".format(aGdes)+","+"{:.6f}".format(-DGads)+\
+                              ")/("+kbev+"*T)) ): "
         
         # Formula: adsorption/desorption rate of volatile adsorbates
-        gas[item]['rads'+cat]="rads"+item+cat+":=(t)-> kads"+item+cat+"*c"+cat+"(t)"+\
+        gas[item]['rads'+cat]="rads"+item+cat+":=(t)-> (1-exp(-1*t))*kads"+item+cat+"*c"+cat+"(t)"+\
                               "-kdes"+item+cat+"*c"+item+"(t) : "  
             
         # Update differential equations for the species

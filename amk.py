@@ -1,6 +1,6 @@
 #!/usr/bin/python3 
 # Created by Rodrigo García-Muelas 
-# 7th October 2019
+# Rev.2019Oct25
 # 
 """This package generates the Input of a microkinetic model to be used in Maple.  
    
