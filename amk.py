@@ -15,11 +15,19 @@ Future modules:
 """
 
 import amklib       
+import os
 
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
 kbev="8.617333262145E−5"  # Boltzmann constant in eV·K−1, string. 
 
+#try: 
+#    from var import itimes  
+#except: 
+#    itimes=[10800.0]
+
+itimes="10800" 
+ 
 
 # Read the input files: gas, int, and rxn. 
 # Format: dictionary of dictionaries. 
@@ -33,7 +41,7 @@ rxn=amklib.read('./rxn.csv')
 
 # Prepare site balance equation, solver for SODE, and initial conditions. 
 # Also initialize the list of differential equations. 
-int,sbalance,sodesolv,initialc = amklib.fint(int,cat)
+int,sbalance,sodesolv,initialc,rhsparse = amklib.fint(int,cat)
 
 # Prepare kinetic constants and rates of adsorption/desorption.
 # Also expand list of differential equations in "int" to include adsorption/desorptions. 
@@ -74,4 +82,22 @@ print(initialc)
 print("\n# SODE Solver: ") 
 print(sodesolv)
 
+print("\n# Preparing postprocessing: ") 
+print("for itime in [ " + itimes + " ] do " )
+
+print("\n# Solution parser: ")
+print(rhsparse) 
+
+print("\n# Site-balance equation after solver: ")
+tmp=os.popen(    "echo \""+sbalance+"\" | sed 's/(t)//g' "   ).read() # popen and read() are used to save in variable 
+tmp="s"+os.popen("echo \""+tmp[:-1]+"\" | sed 's/->//g' "    ).read() # rm last character (newline) 
+print(  os.popen("echo \""+tmp[:-1]+"\" | sed 's/-c/-sc/g' " ).read()[:-1] )  
+
+print("\n# Reaction rates after solver: ")
+for item in gas :
+    print(gas[item]['srads'+cat])
+for item in rxn :
+    print(rxn[item]['srtd'],rxn[item]['srti'])
+
+print("od: ") 
 

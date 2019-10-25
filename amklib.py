@@ -42,6 +42,8 @@ def fint(int,cat):
     sbalance="c"+cat+":=(t)-> 1.0"  
     sodesolv="Solution:=dsolve({"   
     initialc="IC0:="
+    rhsparse=""
+    index=1
         
     # Process intermediates
     for item in sorted(int) : 
@@ -57,6 +59,12 @@ def fint(int,cat):
         
         # Prepare list of default initial conditions as clean surface
         initialc=initialc+" c"+item+"(0.0)=0.0,"
+          
+        # Prepare reader of concentrations from solver  
+        index+=1 
+        print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
+        rhsparse+=rhsparse+"sc"+item+":=RHS["+str(index)+"] : "
+        print(rhsparse)  
         
     # Close the site-balance equation     
     sbalance=sbalance+":" 
@@ -68,8 +76,8 @@ def fint(int,cat):
     initialc=initialc[:-1]+" : "
       
     #print("\n",sbalance,"\n",initialc,"\n",sodesolv) 
-    return(int,sbalance,sodesolv,initialc) 
-
+    return(int,sbalance,sodesolv,initialc,rhsparse) 
+     
 
 def fgas(gas,int,cat):
     """Subroutine that expands the "gas" dictionary of dictionaries to include 
@@ -88,16 +96,16 @@ def fgas(gas,int,cat):
     
     # Process adsorption and desorptions 
     for item in sorted(gas) : 
-        
+          
         # Adsorption energy 
         DGads=int[item][cat]-gas[item][cat]
          
         # Activation energy of adsorption
         aGads=gas[item][cat]-gas[item]['gas'] 
-        
+         
         # Activation energy of desorption
         aGdes=gas[item][cat]-gas[item]['gas']
-        
+         
         # Kinetic constant: adsorption of gas to cat
         gas[item]["kads"+cat]="kads"+item+cat+":=evalf(101325*P"+item+"*exp(-max("+\
                               "0.00,"+"{:.6f}".format(aGads)+","+"{:.6f}".format(DGads)+\
@@ -113,7 +121,11 @@ def fgas(gas,int,cat):
         # Formula: adsorption/desorption rate of volatile adsorbates
         gas[item]['rads'+cat]="rads"+item+cat+":=(t)-> (1-exp(-1*t))*kads"+item+cat+"*c"+cat+"(t)"+\
                               "-kdes"+item+cat+"*c"+item+"(t) : "  
-            
+         
+        # Formula: adsorption/desorption rate of volatile adsorbates after solver
+        gas[item]['srads'+cat]="srads"+item+cat+":= (1-exp(-1*itime))*kads"+item+cat+"*sc"+cat+\
+                               "-kdes"+item+cat+"*sc"+item+" : " 
+             
         # Update differential equations for the species
         int[item]['diff']=int[item]['diff']+"+rads"+item+cat+"(t)"
         
@@ -145,6 +157,8 @@ def frxn(rxn,int,cat):
         rxn[item]['ki']=""    
         rxn[item]['rtd']="r"+item+":=(t)-> k"+item+"d"
         rxn[item]['rti']="-k"+item+"i"
+        rxn[item]['srtd']="sr"+item+":= k"+item+"d" 
+        rxn[item]['srti']="-k"+item+"i"
         
         # Use the is/fs states for each reaction to get their activation energies. 
         # Then write the formula for reaction rate according to their intermediates. 
@@ -156,6 +170,7 @@ def frxn(rxn,int,cat):
             try: 
                 Gdi1=int[rxn[item]['is1']][cat]
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
+                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
                 int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
             except: 
                 Gdi1=0.0
@@ -167,43 +182,46 @@ def frxn(rxn,int,cat):
             try: 
                 Gdi2=int[rxn[item]['is2']][cat]
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
+                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
                 int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
             except: 
                 Gdi2=0.0
                 print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," which was not found.")
-        
+         
         if rxn[item]['fs1']=='None' :
             Gdif=0.0
         else :
             try: 
                 Gdf1=int[rxn[item]['fs1']][cat]
                 rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
+                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
                 int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
             except: 
                 Gdf1=0.0
                 print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," which was not found.")
-        
+         
         if rxn[item]['fs2']=='None' :
             Gdf2=0.0
         else :        
             try: 
                 Gdf2=int[rxn[item]['fs2']][cat]
                 rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
+                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
                 int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
             except: 
                 Gdf2=0.0        
                 print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," which was not found.")
-        
+         
         # Close the formula with ":"
         rxn[item]['rti']=rxn[item]['rti']+" : "
-        
+          
         # Get reaction (dG) and (aG) activation energies for each reaction, both direct and inverse.  
         #print("\n",Gdi1,Gdi2,Gdf1,Gdf2)    
         rxn[item]['dGd']=Gdf1+Gdf2     -Gdi1-Gdi2    
         rxn[item]['aGd']=rxn[item][cat]-Gdi1-Gdi2
         rxn[item]['aGi']=rxn[item][cat]-Gdf1-Gdf2
         #print('\n \n' , rxn, '\n \n')    
-        
+         
         # Kinetic constant for each reaction. 
         rxn[item]['kd']="k"+item+"d:=evalf("+kbh+"*T*exp(-max(0.0,"+\
                         "{:.6f}".format( rxn[item]['aGd'])+","+\
@@ -213,11 +231,11 @@ def frxn(rxn,int,cat):
                         "{:.6f}".format( rxn[item]['aGi'])+","+\
                         "{:.6f}".format(-rxn[item]['dGd'])+\
                         ")/("+kbev+"*T)) ): "
-        
+         
         # Formula: Chemical reactions. The adsorption and desorptions are considered before. 
         #print("\n",rxn[item]['rtd']+rxn[item]['rti'],"\n",rxn[item]['kd'],rxn[item]['ki'])    
-        
+         
     return(rxn,int)
-
+ 
 #def printtxt(
 
