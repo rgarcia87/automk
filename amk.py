@@ -22,12 +22,15 @@ kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1,
 kbev="8.617333262145E−5"  # Boltzmann constant in eV·K−1, string. 
 
 #try: 
-#    from var import itimes  
+#    from var import time1  
 #except: 
-#    itimes=[10800.0]
+#    time1=[10800.0]
 
-itimes="10800" 
- 
+time1="10800" 
+time1=[1.0,2.0,4.0,8.0] 
+print(type(time1))   
+
+
 
 # Read the input files: gas, int, and rxn. 
 # Format: dictionary of dictionaries. 
@@ -83,7 +86,20 @@ print("\n# SODE Solver: ")
 print(sodesolv)
 
 print("\n# Preparing postprocessing: ") 
-print("for itime in [ " + itimes + " ] do " )
+if   type(time1) is str :     
+    print("timei:= "+time1)   
+elif type(time1) is int :      
+    print("timei:= "+time1)    
+elif type(time1) is float : 
+    print("timei:= "+"{:.6E}".format(time1)) 
+elif type(time1) is list : 
+    print("for timei in " + str(time1) + " do " ) 
+    # Lists are limited by [ ] and they should be printed as that. 
+else :  
+    print("Warning! time1 should be type string, float, integer, or list.") 
+    print("current type: "+type(time1))  
+
+print("S:=Solution(timei):") 
 
 print("\n# Solution parser: ")
 print(rhsparse) 
@@ -99,5 +115,7 @@ for item in gas :
 for item in rxn :
     print(rxn[item]['srtd'],rxn[item]['srti'])
 
-print("od: ") 
+if type(time1) is list :  
+    print("od: ") 
+
 

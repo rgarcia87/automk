@@ -1,0 +1,90 @@
+
+# # Microkinetic model for a pseudostationary reaction. 
+# # By Rodrigo García-Muelas. 
+# # Based on Nature Communications 2018, 9, 526. 
+# # First version: October 7th, 2019. 
+
+restart:
+
+filename:="basic-5.txt" : Metal:="TM" : T:=373 : PRg:= 1.000 : PPg:=0.000 : PUg:=0.000 : itime:=36000.0 :
+mwRg:=30 :     mwPg:=30 :     mwUg:=30 :  # Molecular weights. 
+;
+# Core
+# # Adsorption/Reaction energies and corresponding activations. Typically to be read from file. 
+DG01:= -1.00 : AG01:= 0.00 : 
+DG02:= -1.10 : AG02:= 0.00 : 
+DG03:= -2.10 : AG03:= 0.00 : 
+DG11:=  0.00 : AG11:= 1.00 : 
+DG12:= -1.00 : AG12:= 1.40 : 
+
+# # Direct and reverse reaction energies 
+G01d:=max(0.00,DG01,AG01): G01i:=max(0.00,-DG01,AG01-DG01): 
+G02d:=max(0.00,DG02,AG02): G02i:=max(0.00,-DG02,AG02-DG02): 
+G03d:=max(0.00,DG03,AG03): G03i:=max(0.00,-DG03,AG03-DG03): 
+G11d:=max(0.00,DG11,AG11): G11i:=max(0.00,-DG11,AG11-DG11): 
+G12d:=max(0.00,DG12,AG12): G12i:=max(0.00,-DG12,AG12-DG12): 
+
+# # Kinetic constants  
+k01d := evalf(101325*PRg*exp(-G01d/(0.861733e-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*(2*evalf(Pi)*1.3806485200)*10^(-23)*T*mwRg*10^(-27)))): 
+k01i := evalf(2.0836612225*T*10^10*exp(-G01i/(0.861733e-4*T))): 
+
+k02d := evalf(101325*PPg*exp(-G02d/(0.861733e-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*(2*evalf(Pi)*1.3806485200)*10^(-23)*T*mwPg*10^(-27)))): 
+k02i := evalf(2.0836612225*T*10^10*exp(-G02i/(0.861733e-4*T))): 
+
+k03d := evalf(101325*PUg*exp(-G03d/(0.861733e-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*(2*evalf(Pi)*1.3806485200)*10^(-23)*T*mwUg*10^(-27)))): 
+k03i := evalf(2.0836612225*T*10^10*exp(-G03i/(0.861733e-4*T))): 
+
+k11d := evalf(2.0836612225*T*10^10*exp(-G11d/(0.861733e-4*T))): 
+k11i := evalf(2.0836612225*T*10^10*exp(-G11i/(0.861733e-4*T))): 
+
+k12d := evalf(2.0836612225*T*10^10*exp(-G12d/(0.861733e-4*T))): 
+k12i := evalf(2.0836612225*T*10^10*exp(-G12i/(0.861733e-4*T))):# NULL;
+
+# # Reaction rates as functions of time  
+r01:=(t) -> (1-exp(-1*t))^2*k01d*c0000(t)-k01i*cR(t):
+r02:=(t) -> (1-exp(-1*t))^2*k02d*c0000(t)-k02i*cP(t):
+r03:=(t) -> (1-exp(-1*t))^2*k03d*c0000(t)-k03i*cU(t):
+r11:=(t) -> k11d*cR(t)          -k11i*cP(t):
+r12:=(t) -> k12d*cP(t)          -k12i*cU(t):
+
+# # Site balance equation (i.e. concentration of empty sites) as function 
+c0000:=(t) -> 1 -cR(t) -cP(t) -cU(t) :
+
+# # Differential equations deppending on reaction-rate functions 
+
+eqdR:=diff(cR(t),t)=+r01(t)-r11(t): 
+eqdP:=diff(cP(t),t)=+r02(t)+r11(t)-r12(t): 
+eqdU:=diff(cU(t),t)=+r03(t)+r12(t): 
+
+# # Set initial conditions
+IC0:= cR(0)=0, cP(0)=0, cU(0)=0 : 
+
+# # Compile SODE solver 
+Solution := dsolve({ eqdR, eqdP, eqdU, IC0 }, numeric, method = rosenbrock , maxfun = 0 , abserr = 1E-16 , interr = false ); # abserr = 1E-14 , relerr = 1E-12
+;
+
+
+# Processing 
+for itime in [ 1E-6, 1E-3, 1E0, 1E3, 1E6, 1E9, 1E12 ] do
+
+S:=Solution(itime):
+
+scR:=rhs(S[2]): scP:=rhs(S[3]): scU:=rhs(S[4]): 
+
+sc0000:= 1 -scR -scP -scU:
+
+sr01:=evalf( (1-exp(-1*itime))^2*k01d*sc0000-k01i*scR ):
+sr02:=evalf( (1-exp(-1*itime))^2*k02d*sc0000-k02i*scP ):
+sr03:=evalf( (1-exp(-1*itime))^2*k03d*sc0000-k03i*scU ):
+
+sr11:=evalf( k11d*scR          -k11i*scP ):
+sr12:=evalf( k12d*scP          -k12i*scU ):
+ 
+fprintf(filename,"%q %q\n", Metal, T, PRg, PPg, PUg, itime, Solution(itime), sc0000, scR, scP, scU, sr01, sr02, sr03, sr11, sr12 ):
+
+od : # End of loop: itime
+
+
+fclose(filename):
+
+
