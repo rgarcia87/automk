@@ -51,6 +51,10 @@ def fint(int,cat):
         
         # Initialize diff equations to count in which reactions each species participate.     
         int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
+          
+        # Initialize list of reactions in which each intermediate participate. 
+        int[item]['gaslst']=[] 
+        int[item]['rxnlst']=[] 
         
         # Prepare site balance  
         sbalance=sbalance+" -c"+item+"(t)"
@@ -82,8 +86,9 @@ def fint(int,cat):
 
 def fgas(gas,int,cat):
     """Subroutine that expands the "gas" dictionary of dictionaries to include 
-    the kinetic constants and rates of adsorption/desorptions, 
-    as well as expanding the list of differential equations in "int"
+    the kinetic constants and rates of adsorption/desorptions.  
+    It also expands the list of differential equations in "int"
+    and the list of adsorption/desorptions in which each intermediate participates (reaction-like). 
     
     Args: 
         gas: Dict of dicts containing the volatile species. (Mutable)
@@ -129,6 +134,11 @@ def fgas(gas,int,cat):
              
         # Update differential equations for the species
         int[item]['diff']=int[item]['diff']+"+rads"+item+cat+"(t)"
+         
+        # Update list of adsorption/desorptions in which each intermediate participates. 
+        int[item]['gaslst'].append(item)    
+        # Example: int['P']['gaslst'] will append 'P' as item. 
+        # This must be modified somewhat to differentiate the species in gas and adsorbed.  
         
         # Final formulaes
         #print("\n",gas[item]["kads"+cat],"\n\n",gas[item]["kdes"+cat],"\n\n",gas[item]['rads'+cat],"\n")
@@ -137,8 +147,9 @@ def fgas(gas,int,cat):
 
 def frxn(rxn,int,cat):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
-    the kinetic constants and rates of all chemical reactions,   
-    as well as expanding the list of differential equations in "int"
+    the kinetic constants and rates of all chemical reactions. 
+    It also expands the list of differential equations in "int"
+    and the list of reactions in which each intermediate participates. 
     
     Args: 
         rxn: Dict of dicts containing the reactions. (Mutable)
@@ -232,9 +243,24 @@ def frxn(rxn,int,cat):
                         "{:.6f}".format( rxn[item]['aGi'])+","+\
                         "{:.6f}".format(-rxn[item]['dGd'])+\
                         ")/("+kbev+"*T)) ): "
-         
-        # Formula: Chemical reactions. The adsorption and desorptions are considered before. 
-        #print("\n",rxn[item]['rtd']+rxn[item]['rti'],"\n",rxn[item]['kd'],rxn[item]['ki'])    
+        
+        # Update list of reactions in which each intermediate participates. 
+        try: 
+            int[rxn[item]['is1']]['rxnlst'].append(item)    
+        except: 
+            pass 
+        try: 
+            int[rxn[item]['is2']]['rxnlst'].append(item)   
+        except: 
+            pass 
+        try: 
+            int[rxn[item]['fs1']]['rxnlst'].append(item)    
+        except: 
+            pass 
+        try: 
+            int[rxn[item]['fs2']]['rxnlst'].append(item)   
+        except: 
+            pass 
          
     return(rxn,int)
  

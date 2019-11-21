@@ -48,4 +48,11 @@ rxn,int=amklib.frxn(rxn,int,cat)
 # Print Maple input. 
 amklib.printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse) 
 
+# 
+print("gas and reaction lists")
+for item in int : 
+    print(item) 
+    print(int[item]['gaslst'])  
+    print(int[item]['rxnlst'])  
+    print("\n") 
 
