@@ -56,66 +56,7 @@ rxn,int=amklib.frxn(rxn,int,cat)
 
 #print("\n",int,"\n\n",sbalance,"\n\n",sodesolv,"\n\n",initialc,"\n")
 
-print("# Heading " ) 
-print("restart: " )
-print("PR:=1.0 : PP:= 0.0 : PU:= 0.0 : T:=300 :" )
-
-print("\n# Kinetic constants") 
-for item in gas : 
-    print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
-for item in rxn : 
-    print(rxn[item]['kd'],  rxn[item]['ki']  )  
-
-print("\n# Reaction rates:") 
-for item in gas : 
-    print(gas[item]['rads'+cat]) 
-for item in rxn : 
-    print(rxn[item]['rtd'],rxn[item]['rti']) 
-
-print("\n# Site-balance equation: ")
-print(sbalance)
-
-print("\n# Differential equations: ") 
-for item in sorted(int) : 
-    print(int[item]['diff']," : ")
-
-print("\n# Initial conditions: ") 
-print(initialc) 
-
-print("\n# SODE Solver: ") 
-print(sodesolv)
-
-print("\n# Preparing postprocessing: ") 
-if   type(time1) is str :     
-    print("timei:= "+time1)   
-elif type(time1) is int :      
-    print("timei:= "+time1)    
-elif type(time1) is float : 
-    print("timei:= "+"{:.6E}".format(time1)) 
-elif type(time1) is list : 
-    print("for timei in " + str(time1) + " do " ) 
-    # Lists are limited by [ ] and they should be printed as that. 
-else :  
-    print("Warning! time1 should be type string, float, integer, or list.") 
-    print("current type: "+type(time1))  
-
-print("S:=Solution(timei):") 
-
-print("\n# Solution parser: ")
-print(rhsparse) 
-
-print("\n# Site-balance equation after solver: ")
-tmp=os.popen(    "echo \""+sbalance+"\" | sed 's/(t)//g' "   ).read() # popen and read() are used to save in variable 
-tmp="s"+os.popen("echo \""+tmp[:-1]+"\" | sed 's/->//g' "    ).read() # rm last character (newline) 
-print(  os.popen("echo \""+tmp[:-1]+"\" | sed 's/-c/-sc/g' " ).read()[:-1] )  
-
-print("\n# Reaction rates after solver: ")
-for item in gas :
-    print(gas[item]['srads'+cat])
-for item in rxn :
-    print(rxn[item]['srtd'],rxn[item]['srti'])
-
-if type(time1) is list :  
-    print("od: ") 
+# Print Maple input. 
+printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse) 
 
 

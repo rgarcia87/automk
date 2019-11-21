@@ -237,5 +237,85 @@ def frxn(rxn,int,cat):
          
     return(rxn,int)
  
-#def printtxt(
+def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse)
+    """Subroutine that prints a given calculation for Maple 
+      
+    Args: 
+        gas: Dict of dicts containing molecules in gas phase. (Mutable) 
+        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
+        rxn: Dict of dicts containing the reactions. (Mutable)
+        cat: Name of the catalyst. Currently only string is supported.
+        time1: Time or times for which the concentrations and reactions shall be printed (str/int/float, or list).   
+        sbalance: Site-balance equetion, string. 
+        initialc: Initial conditions, string. 
+        sodesolv: Calls SODE solver in Maple, string.  
+        rhsparse: Parser of surface concentrations, string. 
+    """
+    
+    print("# Heading " )
+    print("restart: " )
+    print("PR:=1.0 : PP:= 0.0 : PU:= 0.0 : T:=300 :" )
+    
+    print("\n# Kinetic constants")
+    for item in gas :
+        print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
+    for item in rxn :
+        print(rxn[item]['kd'],  rxn[item]['ki']  )
+    
+    print("\n# Reaction rates:")
+    for item in gas :
+        print(gas[item]['rads'+cat])
+    for item in rxn :
+        print(rxn[item]['rtd'],rxn[item]['rti'])
+    
+    print("\n# Site-balance equation: ")
+    print(sbalance)
+    
+    print("\n# Differential equations: ")
+    for item in sorted(int) :
+        print(int[item]['diff']," : ")
+    
+    print("\n# Initial conditions: ")
+    print(initialc)
+    
+    print("\n# SODE Solver: ")
+    print(sodesolv)
+    
+    print("\n# Preparing postprocessing: ")
+    if   type(time1) is str :
+        print("timei:= "+time1)
+    elif type(time1) is int :
+        print("timei:= "+time1)
+    elif type(time1) is float :
+        print("timei:= "+"{:.6E}".format(time1))
+    elif type(time1) is list :
+        print("for timei in " + str(time1) + " do " )
+        # Lists are limited by [ ] and they should be printed as that. 
+    else :
+        print("\t Warning! time1 should be type string, float, integer, or list.")
+        print("\t current type: "+type(time1))
+        print("\t time1 contains: \n\t",time1) 
+        print("\t automk abnormal termination. " ) 
+        exit() 
+    
+    print("S:=Solution(timei):")
+    
+    print("\n# Solution parser: ")
+    print(rhsparse)
+    
+    print("\n# Site-balance equation after solver: ")
+    tmp=os.popen(    "echo \""+sbalance+"\" | sed 's/(t)//g' "   ).read() # popen and read() are used to save in variable 
+    tmp="s"+os.popen("echo \""+tmp[:-1]+"\" | sed 's/->//g' "    ).read() # rm last character (newline) 
+    print(  os.popen("echo \""+tmp[:-1]+"\" | sed 's/-c/-sc/g' " ).read()[:-1] )
+    
+    print("\n# Reaction rates after solver: ")
+    for item in gas :
+        print(gas[item]['srads'+cat])
+    for item in rxn :
+        print(rxn[item]['srtd'],rxn[item]['srti'])
+    
+    if type(time1) is list :  
+    print("od: ") 
+    
+
 
