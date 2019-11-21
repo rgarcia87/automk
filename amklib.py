@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
@@ -237,7 +238,7 @@ def frxn(rxn,int,cat):
          
     return(rxn,int)
  
-def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse)
+def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse): 
     """Subroutine that prints a given calculation for Maple 
       
     Args: 
@@ -315,7 +316,7 @@ def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse)
         print(rxn[item]['srtd'],rxn[item]['srti'])
     
     if type(time1) is list :  
-    print("od: ") 
+        print("od: ") 
     
 
 

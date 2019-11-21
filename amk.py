@@ -15,22 +15,14 @@ Future modules:
 """
 
 import amklib       
-import os
 
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
 kbev="8.617333262145E−5"  # Boltzmann constant in eV·K−1, string. 
 
-#try: 
-#    from var import time1  
-#except: 
-#    time1=[10800.0]
-
 time1="10800" 
 time1=[1.0,2.0,4.0,8.0] 
 print(type(time1))   
-
-
 
 # Read the input files: gas, int, and rxn. 
 # Format: dictionary of dictionaries. 
@@ -40,7 +32,6 @@ gas=amklib.read('./gas.csv')
 int=amklib.read('./int.csv')
 rxn=amklib.read('./rxn.csv')
 #print(cat, '\n \n', gas,'\n \n', int, '\n \n' , rxn)
-#print('\n \n', int['iP']['diff'], '\n \n')    
 
 # Prepare site balance equation, solver for SODE, and initial conditions. 
 # Also initialize the list of differential equations. 
@@ -54,9 +45,7 @@ gas,int=amklib.fgas(gas,int,cat)
 # Also expand list of differential equations in "int" to include chemical steps. 
 rxn,int=amklib.frxn(rxn,int,cat)
 
-#print("\n",int,"\n\n",sbalance,"\n\n",sodesolv,"\n\n",initialc,"\n")
-
 # Print Maple input. 
-printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse) 
+amklib.printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse) 
 
 
