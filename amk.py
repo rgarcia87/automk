@@ -21,6 +21,7 @@ kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1,
 kbev="8.617333262145E−5"  # Boltzmann constant in eV·K−1, string. 
 
 conf=amklib.readconf("./parameters.txt") 
+ltp={} # List to print dictionary
 
 # Read the input files: gas, int, and rxn. 
 # Format: dictionary of dictionaries. 
@@ -33,28 +34,23 @@ rxn=amklib.read('./rxn.csv')
 
 # Prepare site balance equation, solver for SODE, and initial conditions. 
 # Also initialize the list of differential equations.
-int,sbalance,sodesolv,initialc,rhsparse = amklib.fint(conf,int,cat)
+int,sbalance,sodesolv,initialc,rhsparse=amklib.fint(conf,int,cat,ltp)
 
 # Prepare kinetic constants and rates of adsorption/desorption.
 # Also expand list of differential equations in "int" to include adsorption/desorptions. 
-gas,int=amklib.fgas(conf,gas,int,cat) 
+gas,int=amklib.fgas(conf,gas,int,cat,ltp) 
 
 # Prepare kinetic constants and rates of all chemical steps. 
 # Also expand list of differential equations in "int" to include chemical steps. 
-rxn,int=amklib.frxn(conf,rxn,int,cat)
+rxn,int=amklib.frxn(conf,rxn,int,cat,ltp)
 
 # Print Maple input. 
-if not conf['Reactor']['Pathdetector'] : 
+if not conf['General']['pathdetector'] : 
     # Conventional MK 
-    amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse) 
+    amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) 
 else: 
     # Path detector: "eliminate" one intermediate at a time to see how MK behaves. 
-    amklib.printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse) 
+    amklib.printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) 
 
-#print("gas and reaction lists")
-#for item in int : 
-#    print(item) 
-#    print(int[item]['gaslst'])  
-#    print(int[item]['rxnlst'])  
-#    print("\n") 
+print("fclose(filename):\n" )
 

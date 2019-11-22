@@ -41,7 +41,7 @@ def read(filename='./int.csv'):
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='Label').T.to_dict()
     return(dic) 
      
-def fint(conf,int,cat):
+def fint(conf,int,cat,ltp):
     """This function process the "intermediates" dataframe to generate 
     the site-balance equation, the SODE-solver, and the initial conditions as clean surface. 
     It also initializes the list of differential equations.  
@@ -64,6 +64,7 @@ def fint(conf,int,cat):
     initialc="IC0:="
     rhsparse=""
     index=1
+    ltp['int']=""
         
     # Process intermediates
     for item in sorted(int) : 
@@ -89,6 +90,9 @@ def fint(conf,int,cat):
         #print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
         rhsparse+="sc"+item+":=RHS["+str(index)+"] : "
         #print(rhsparse)  
+         
+        # List of reactions for fprintf function in Maple 
+        ltp['int']+="sc"+item+", " 
         
     # Close the site-balance equation     
     sbalance=sbalance+":" 
@@ -104,7 +108,7 @@ def fint(conf,int,cat):
      
 
  
-def fgas(conf,gas,int,cat):
+def fgas(conf,gas,int,cat,ltp):
     """Subroutine that expands the "gas" dictionary of dictionaries to include 
     the kinetic constants and rates of adsorption/desorptions.  
     It also expands the list of differential equations in "int"
@@ -134,6 +138,8 @@ def fgas(conf,gas,int,cat):
         pdamp1=""
         pdamp2=""
         
+    ltp['gas']=""
+     
     # Process adsorption and desorptions 
     for item in sorted(gas) : 
         
@@ -180,12 +186,12 @@ def fgas(conf,gas,int,cat):
         # Example: int['P']['gaslst'] will append 'P' as item. 
         # This must be modified somewhat to differentiate the species in gas and adsorbed.  
         
-        # Final formulaes
-        #print("\n",gas[item]["kads"+cat],"\n\n",gas[item]["kdes"+cat],"\n\n",gas[item]['rads'+cat],"\n")
+        # List of gas-phase species for the fprintf Maple function 
+        ltp['gas']+="P"+item+", " 
         
     return(gas,int)
 
-def frxn(conf,rxn,int,cat):
+def frxn(conf,rxn,int,cat,ltp):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
     It also expands the list of differential equations in "int"
@@ -202,6 +208,8 @@ def frxn(conf,rxn,int,cat):
         int: Expanded dict of dicts with list of differential equations updated with chemical reactions. (Mutable)
     """ 
         
+    ltp['rxn']=""  
+     
     for item in sorted(rxn) : 
         # Initialize variables 
         rxn[item]['aGd']=""
@@ -302,10 +310,13 @@ def frxn(conf,rxn,int,cat):
             int[rxn[item]['fs2']]['rxnlst'].append(item)   
         except: 
             pass 
+        
+        # List of reactions for fprintf function in Maple 
+        ltp['rxn']+="r"+item+", "
          
     return(rxn,int)
  
-def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse): 
+def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
     """Subroutine that prints a given calculation for Maple 
       
     Args: 
@@ -323,6 +334,8 @@ def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse):
     
     print("# Heading " )
     print("restart: " )
+    print("cat:=",cat ) 
+     
     print("T:=", conf.get("Reactor","reactortemp"), " : " )
     for item in sorted(gas) : 
         print('P'+item+":=",gas[item]['pressure']," : ") 
@@ -386,12 +399,14 @@ def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse):
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'])
     
+    print('\nfprintf(filename,"%q %q\\n", cat, T,',ltp['gas'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
+
     if type(time1) is list :  
         print("\nod: \n ") 
-    
+      
     print()
     
-def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse): 
+def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
     """Subroutine that prints microkinetics in Maple removing an intermediate each time.  
         It cals subroutine printtxt. 
         
@@ -428,7 +443,7 @@ def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse):
             rxntmp[jtem]['rti']=" : "
             rxntmp[jtem]['srtd']="sr"+jtem+":= 0.00"
             rxntmp[jtem]['srti']=" : "
-        printtxt(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse)
+        printtxt(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
 
 
 
