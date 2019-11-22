@@ -1,11 +1,11 @@
 [General]
-  pathdetector=True           # Deactivates one intermediate at a time to see its effect in the microkinetics
+  pathdetector=0              # 1 to deactivate one intermediate at a time to see its effect in the microkinetics. Default: 0. 
   mapleoutput="output-01.txt" # Output files
 
 [Reactor] 
   reactortype="Differential" 
   reactortemp=300             # Temperature in Kelvin
-  time1=1.0                   # Reaction time   
+  time1=[1E-12,1E-6,1E-3,1,1E3,1E6,1E9,1E12] # Reaction time   
 # time2=10800                 # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
   pressuredamptime=1          # Pressure damping time in seconds   
 

@@ -45,12 +45,5 @@ gas,int=amklib.fgas(conf,gas,int,cat,ltp)
 rxn,int=amklib.frxn(conf,rxn,int,cat,ltp)
 
 # Print Maple input. 
-if not conf['General']['pathdetector'] : 
-    # Conventional MK 
-    amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) 
-else: 
-    # Path detector: "eliminate" one intermediate at a time to see how MK behaves. 
-    amklib.printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) 
-
-print("fclose(filename):\n" )
+amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
 

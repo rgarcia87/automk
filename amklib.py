@@ -316,8 +316,8 @@ def frxn(conf,rxn,int,cat,ltp):
          
     return(rxn,int)
  
-def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
-    """Subroutine that prints a given calculation for Maple 
+def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
+    """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
       
     Args: 
         conf: Configuration data. 
@@ -399,7 +399,7 @@ def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'])
     
-    print('\nfprintf(filename,"%q %q\\n", cat, T,',ltp['gas'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", cat, T,',ltp['gas'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
 
     if type(time1) is list :  
         print("\nod: \n ") 
@@ -443,7 +443,35 @@ def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
             rxntmp[jtem]['rti']=" : "
             rxntmp[jtem]['srtd']="sr"+jtem+":= 0.00"
             rxntmp[jtem]['srti']=" : "
-        printtxt(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
+        printtxtsr(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
 
+def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) :  
+    """Subroutine that chooses what to print 
+        
+    Args: 
+        conf: Configuration data. 
+        gas: Dict of dicts containing molecules in gas phase. (Mutable) 
+        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
+        rxn: Dict of dicts containing the reactions. (Mutable)
+        cat: Name of the catalyst. Currently only string is supported.
+        sbalance: Site-balance equetion, string. 
+        initialc: Initial conditions, string. 
+        sodesolv: Calls SODE solver in Maple, string.  
+        rhsparse: Parser of surface concentrations, string. 
+    """
+    
+    try : 
+        if   conf['General']['pathdetector'] is "0" : # Single run 
+            printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
+        elif conf['General']['pathdetector'] is "1" : # Path detector: multiple runs 
+            printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
+        else :   
+            print("Warning, [General]pathdetector should be 0 or 1. Assuming 0.") 
+            printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) 
+    except: 
+        printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
+        print("Warning, [General]pathdetector not found. Assuming 0. ")
+    print("fclose(filename):\n" )
+ 
 
 
