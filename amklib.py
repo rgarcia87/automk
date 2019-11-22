@@ -2,11 +2,11 @@ import pandas as pd
 import os
 import configparser, ast
 import copy  
-
+     
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
 kbev="8.617333262145E-5"  # Boltzmann constant in eV·K−1, string. 
-
+     
 def readconf(filename='./parameters.txt'):  
     """This function reads the input parameters from a file
      
@@ -106,8 +106,6 @@ def fint(conf,int,cat,ltp):
     #print("\n",sbalance,"\n",initialc,"\n",sodesolv) 
     return(int,sbalance,sodesolv,initialc,rhsparse) 
      
-
- 
 def fgas(conf,gas,int,cat,ltp):
     """Subroutine that expands the "gas" dictionary of dictionaries to include 
     the kinetic constants and rates of adsorption/desorptions.  
@@ -317,7 +315,7 @@ def frxn(conf,rxn,int,cat,ltp):
         ltp['rxn']+="sr"+item+", "
          
     return(rxn,int)
- 
+      
 def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
     """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
       
@@ -374,22 +372,22 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     else : 
         print("timei:= "+time1+" : ")
       
-    print("\n# Preparing postprocessing: ")
-    if   type(time1) is str :
-        print("timei:= "+time1+" : ")
-    elif type(time1) is int :
-        print("timei:= "+"g".format(time1)+" : ")  
-    elif type(time1) is float :
-        print("timei:= "+"g".format(time1)+" : ")
-    elif type(time1) is list :
-        print("for timei in " + str(time1) + " do ")
-        # Lists are limited by [ ] and they should be printed as that. 
-    else :
-        print("\t Warning! time1 should be type string, float, integer, or list.")
-        print("\t current type: "+type(time1))
-        print("\t time1 contains: \n\t",time1) 
-        print("\t automk abnormal termination. " ) 
-        exit() 
+#    print("\n# Preparing postprocessing: ")
+#    if   type(time1) is str :
+#        print("timei:= "+time1+" : ")
+#    elif type(time1) is int :
+#        print("timei:= "+"g".format(time1)+" : ")  
+#    elif type(time1) is float :
+#        print("timei:= "+"g".format(time1)+" : ")
+#    elif type(time1) is list :
+#        print("for timei in " + str(time1) + " do ")
+#        # Lists are limited by [ ] and they should be printed as that. 
+#    else :
+#        print("\t Warning! time1 should be type string, float, integer, or list.")
+#        print("\t current type: "+type(time1))
+#        print("\t time1 contains: \n\t",time1) 
+#        print("\t automk abnormal termination. " ) 
+#        exit() 
     
     print("S:=Solution(timei):")
     
@@ -408,7 +406,7 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
     
     print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," ): ")
-
+      
     if timel :     
         print("\nod: \n ") 
       
@@ -497,6 +495,3 @@ def rxntime(conf) :
         time1=time1raw
     return(time1,timel)
     
-#         print("timei:= "+time1+" : ")
-#         if type(time1) is list :
-#            print("for timei in " + str(time1) + " do ")    
