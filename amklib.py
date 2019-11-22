@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import configparser
+import copy  
 
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
@@ -102,6 +103,7 @@ def fint(conf,int,cat):
     return(int,sbalance,sodesolv,initialc,rhsparse) 
      
 
+ 
 def fgas(conf,gas,int,cat):
     """Subroutine that expands the "gas" dictionary of dictionaries to include 
     the kinetic constants and rates of adsorption/desorptions.  
@@ -126,8 +128,8 @@ def fgas(conf,gas,int,cat):
         pressuredamptime=1.0   
     
     if pressuredamptime>1E-13 : 
-        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))*"
-        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))*"
+        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))^2*"
+        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))^2*"
     else : 
         pdamp1=""
         pdamp2=""
@@ -151,14 +153,14 @@ def fgas(conf,gas,int,cat):
         aGdes=gas[item][cat]-gas[item]['gas']
          
         # Kinetic constant: adsorption of gas to cat
-        gas[item]["kads"+cat]="kads"+item+cat+":=evalf(101325*P"+item+"*exp(-max("+\
+        gas[item]['kads'+cat]="kads"+item+cat+":=evalf(101325*P"+item+"*exp(-max("+\
                               "0.00,"+"{:.6f}".format(aGads)+","+"{:.6f}".format(DGads)+\
                               ")/(0.861733E-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+"{:.2f}".format(gas[item]['mw'])+\
                               "*10^(-27)))) : " 
          
         # Kinetic constant: desorption of volatile species from cat to gas. 
-        gas[item]["kdes"+cat]="kdes"+item+cat+":=evalf("+kbh+"*T*exp(-max("+\
+        gas[item]['kdes'+cat]="kdes"+item+cat+":=evalf("+kbh+"*T*exp(-max("+\
                               "0.00,"+"{:.6f}".format(aGdes)+","+"{:.6f}".format(-DGads)+\
                               ")/("+kbev+"*T)) ): "
         
@@ -379,13 +381,54 @@ def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse):
     print(  os.popen("echo \""+tmp[:-1]+"\" | sed 's/-c/-sc/g' " ).read()[:-1] )
     
     print("\n# Reaction rates after solver: ")
-    for item in gas :
+    for item in sorted(gas) :
         print(gas[item]['srads'+cat])
-    for item in rxn :
+    for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'])
     
     if type(time1) is list :  
         print("\nod: \n ") 
     
+    print()
+    
+def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse): 
+    """Subroutine that prints microkinetics in Maple removing an intermediate each time.  
+        It cals subroutine printtxt. 
+        
+    Args: 
+        conf: Configuration data. 
+        gas: Dict of dicts containing molecules in gas phase. (Mutable) 
+        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
+        rxn: Dict of dicts containing the reactions. (Mutable)
+        cat: Name of the catalyst. Currently only string is supported.
+        sbalance: Site-balance equetion, string. 
+        initialc: Initial conditions, string. 
+        sodesolv: Calls SODE solver in Maple, string.  
+        rhsparse: Parser of surface concentrations, string. 
+    """ 
+        
+    for item in sorted(int) : 
+        inttmp = copy.deepcopy(int)
+        gastmp = copy.deepcopy(gas)  
+        rxntmp = copy.deepcopy(rxn)  
+         
+        inttmp[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)=0.00 "
+        #print(item) 
+        #print(int[item]['gaslst']) 
+        #print(int[item]['rxnlst']) 
+        for jtem in int[item]['gaslst'] : 
+            gastmp[jtem]['kads'+cat]="kads"+jtem+cat+":=evalf(0.0): "
+            gastmp[jtem]['kdes'+cat]="kdes"+jtem+cat+":=evalf(0.0): "
+            gastmp[jtem]['rads'+cat]="rads"+item+cat+":=(t)-> 0.00 :"
+            gastmp[jtem]['srads'+cat]="srads"+jtem+cat+":=0.00 :" 
+        for jtem in int[item]['rxnlst'] : 
+            rxntmp[jtem]['kd']="k"+jtem+"d:=evalf(0.0): "   
+            rxntmp[jtem]['ki']="k"+jtem+"i:=evalf(0.0): "   
+            rxntmp[jtem]['rtd']="r"+jtem+":=(t)-> 0.00"
+            rxntmp[jtem]['rti']=" : "
+            rxntmp[jtem]['srtd']="sr"+jtem+":= 0.00"
+            rxntmp[jtem]['srti']=" : "
+        printtxt(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse)
+
 
 

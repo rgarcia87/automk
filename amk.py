@@ -44,9 +44,12 @@ gas,int=amklib.fgas(conf,gas,int,cat)
 rxn,int=amklib.frxn(conf,rxn,int,cat)
 
 # Print Maple input. 
-#if conf 
-amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse) 
-
+if not conf['Reactor']['Pathdetector'] : 
+    # Conventional MK 
+    amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse) 
+else: 
+    # Path detector: "eliminate" one intermediate at a time to see how MK behaves. 
+    amklib.printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse) 
 
 #print("gas and reaction lists")
 #for item in int : 
