@@ -14,14 +14,14 @@ Future modules:
     * Consider coverage effects.    
 """
 
+# Load libraries 
 import amklib       
 
-#Constants 
-kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
-kbev="8.617333262145E−5"  # Boltzmann constant in eV·K−1, string. 
+# Initialize variables
+ltp={}                    # List to print dictionary
 
+# Read configuration file 
 conf=amklib.readconf("./parameters.txt") 
-ltp={} # List to print dictionary
 
 # Read the input files: gas, int, and rxn. 
 # Format: dictionary of dictionaries. 
@@ -46,4 +46,6 @@ rxn,int=amklib.frxn(conf,rxn,int,cat,ltp)
 
 # Print Maple input. 
 amklib.printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
+
+#amklib.rxntime(conf)
 

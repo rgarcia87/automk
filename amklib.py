@@ -1,11 +1,11 @@
 import pandas as pd
 import os
-import configparser
+import configparser, ast
 import copy  
 
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
-kbev="8.617333262145E-5"  # Boltzmann constant in eV·K−1, string.
+kbev="8.617333262145E-5"  # Boltzmann constant in eV·K−1, string. 
 
 def readconf(filename='./parameters.txt'):  
     """This function reads the input parameters from a file
@@ -88,7 +88,7 @@ def fint(conf,int,cat,ltp):
         # Prepare reader of concentrations from solver  
         index+=1 
         #print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
-        rhsparse+="sc"+item+":=RHS["+str(index)+"] : "
+        rhsparse+="sc"+item+":=rhs(S["+str(index)+"]) : "
         #print(rhsparse)  
          
         # List of reactions for fprintf function in Maple 
@@ -138,6 +138,7 @@ def fgas(conf,gas,int,cat,ltp):
         pdamp1=""
         pdamp2=""
         
+    ltp['prs']=""
     ltp['gas']=""
      
     # Process adsorption and desorptions 
@@ -187,7 +188,8 @@ def fgas(conf,gas,int,cat,ltp):
         # This must be modified somewhat to differentiate the species in gas and adsorbed.  
         
         # List of gas-phase species for the fprintf Maple function 
-        ltp['gas']+="P"+item+", " 
+        ltp['prs']+="P"+item+", " 
+        ltp['gas']+="srads"+item+cat+", "   
         
     return(gas,int)
 
@@ -312,7 +314,7 @@ def frxn(conf,rxn,int,cat,ltp):
             pass 
         
         # List of reactions for fprintf function in Maple 
-        ltp['rxn']+="r"+item+", "
+        ltp['rxn']+="sr"+item+", "
          
     return(rxn,int)
  
@@ -334,7 +336,7 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     
     print("# Heading " )
     print("restart: " )
-    print("cat:=",cat ) 
+    print("catal:=",cat,": ") 
      
     print("T:=", conf.get("Reactor","reactortemp"), " : " )
     for item in sorted(gas) : 
@@ -364,8 +366,14 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     
     print("\n# SODE Solver: ")
     print(sodesolv)
-    
-    time1=conf['Reactor']['time1'] 
+      
+    # Time control: 
+    time1,timel=rxntime(conf)
+    if timel : 
+        print("for timei in " + str(time1) + " do ")
+    else : 
+        print("timei:= "+time1+" : ")
+      
     print("\n# Preparing postprocessing: ")
     if   type(time1) is str :
         print("timei:= "+time1+" : ")
@@ -397,11 +405,11 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     for item in sorted(gas) :
         print(gas[item]['srads'+cat])
     for item in sorted(rxn) :
-        print(rxn[item]['srtd'],rxn[item]['srti'])
+        print(rxn[item]['srtd'],rxn[item]['srti'],":")
     
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", cat, T,',ltp['gas'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," ): ")
 
-    if type(time1) is list :  
+    if timel :     
         print("\nod: \n ") 
       
     print()
@@ -471,7 +479,24 @@ def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) :
     except: 
         printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
         print("Warning, [General]pathdetector not found. Assuming 0. ")
-    print("fclose(filename):\n" )
+    print("fclose(",conf['General']['mapleoutput'],"):\n" )
  
-
-
+def rxntime(conf) : 
+    """Subroutine that interpretes the time.   
+        Requires the ast package 
+    
+    Args: 
+        conf: Configuration data. 
+    """
+    time1raw=conf['Reactor']['time1']
+    if time1raw.find(',') >0 : # If it is a list 
+        timel=True 
+        time1=ast.literal_eval(time1raw)
+    else :                  # If it is an unique value  
+        timel=False 
+        time1=time1raw
+    return(time1,timel)
+    
+#         print("timei:= "+time1+" : ")
+#         if type(time1) is list :
+#            print("for timei in " + str(time1) + " do ")    

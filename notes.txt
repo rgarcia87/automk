@@ -1,0 +1,1 @@
+"cat" is a protected word in Maple. When printing the Maple input, "catal" was used instead. 
