@@ -1,10 +1,26 @@
 import pandas as pd
 import os
+import configparser
 
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
 kbev="8.617333262145E-5"  # Boltzmann constant in eV·K−1, string.
 
+def readconf(filename='./parameters.txt'):  
+    """This function reads the input parameters from a file
+     
+    Args: 
+        filename: Input file in Windows .ini format. Comments should be provided as "#" 
+        
+    Returns: 
+        conf: Configuration data. 
+        
+    """
+    
+    conf=configparser.ConfigParser(inline_comment_prefixes=('#'))
+    conf.read(filename)
+    return conf 
+      
 def read(filename='./int.csv'): 
     """This function reads a file containing information of catalysts, gas, intermediates, or reactions. 
     It requires pandas to be loaded.  
@@ -20,15 +36,17 @@ def read(filename='./int.csv'):
         dicint: a dictionary containing at least the tags, energies, and frequencies of all species. 
     
     """
+    
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='Label').T.to_dict()
     return(dic) 
-
-def fint(int,cat):
+     
+def fint(conf,int,cat):
     """This function process the "intermediates" dataframe to generate 
     the site-balance equation, the SODE-solver, and the initial conditions as clean surface. 
     It also initializes the list of differential equations.  
     
     Args: 
+        conf: Configuration data.
         int: Dict of dicts containing at least a list of intermediates as index. 
         cat: Name of the catalyst. Currently only string is supported. 
     
@@ -67,9 +85,9 @@ def fint(int,cat):
           
         # Prepare reader of concentrations from solver  
         index+=1 
-        print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
-        rhsparse+=rhsparse+"sc"+item+":=RHS["+str(index)+"] : "
-        print(rhsparse)  
+        #print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
+        rhsparse+="sc"+item+":=RHS["+str(index)+"] : "
+        #print(rhsparse)  
         
     # Close the site-balance equation     
     sbalance=sbalance+":" 
@@ -84,13 +102,14 @@ def fint(int,cat):
     return(int,sbalance,sodesolv,initialc,rhsparse) 
      
 
-def fgas(gas,int,cat):
+def fgas(conf,gas,int,cat):
     """Subroutine that expands the "gas" dictionary of dictionaries to include 
     the kinetic constants and rates of adsorption/desorptions.  
     It also expands the list of differential equations in "int"
     and the list of adsorption/desorptions in which each intermediate participates (reaction-like). 
     
     Args: 
+        conf: Configuration data. 
         gas: Dict of dicts containing the volatile species. (Mutable)
         int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
         cat: Name of the catalyst. Currently only string is supported.
@@ -100,8 +119,27 @@ def fgas(gas,int,cat):
         int: Expanded dict of dicts with list of differential equations updated with adsorption/desorptions. (Mutable)
     """
     
+    # Get pressure damp 
+    try :      
+        pressuredamptime=float(conf['Reactor']['pressuredamptime'])   
+    except :   
+        pressuredamptime=1.0   
+    
+    if pressuredamptime>1E-13 : 
+        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))*"
+        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))*"
+    else : 
+        pdamp1=""
+        pdamp2=""
+        
     # Process adsorption and desorptions 
     for item in sorted(gas) : 
+        
+        # Get partial pressures 
+        try : 
+            gas[item]['pressure']=conf['Pressures'][item] 
+        except : 
+            gas[item]['pressure']=0  
           
         # Adsorption energy 
         DGads=int[item][cat]-gas[item][cat]
@@ -125,11 +163,11 @@ def fgas(gas,int,cat):
                               ")/("+kbev+"*T)) ): "
         
         # Formula: adsorption/desorption rate of volatile adsorbates
-        gas[item]['rads'+cat]="rads"+item+cat+":=(t)-> (1-exp(-1*t))*kads"+item+cat+"*c"+cat+"(t)"+\
+        gas[item]['rads'+cat]="rads"+item+cat+":=(t)-> "+pdamp1+"kads"+item+cat+"*c"+cat+"(t)"+\
                               "-kdes"+item+cat+"*c"+item+"(t) : "  
          
         # Formula: adsorption/desorption rate of volatile adsorbates after solver
-        gas[item]['srads'+cat]="srads"+item+cat+":= (1-exp(-1*itime))*kads"+item+cat+"*sc"+cat+\
+        gas[item]['srads'+cat]="srads"+item+cat+":= "   +pdamp2+"kads"+item+cat+"*sc"+cat+\
                                "-kdes"+item+cat+"*sc"+item+" : " 
              
         # Update differential equations for the species
@@ -145,13 +183,14 @@ def fgas(gas,int,cat):
         
     return(gas,int)
 
-def frxn(rxn,int,cat):
+def frxn(conf,rxn,int,cat):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
     It also expands the list of differential equations in "int"
     and the list of reactions in which each intermediate participates. 
     
     Args: 
+        conf: Configuration data.
         rxn: Dict of dicts containing the reactions. (Mutable)
         int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
         cat: Name of the catalyst. Currently only string is supported.
@@ -264,15 +303,16 @@ def frxn(rxn,int,cat):
          
     return(rxn,int)
  
-def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse): 
+def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse): 
     """Subroutine that prints a given calculation for Maple 
       
     Args: 
+        conf: Configuration data. 
+            time1: Time or times for which the concentrations and reactions shall be printed (str/int/float, or list).
         gas: Dict of dicts containing molecules in gas phase. (Mutable) 
         int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
         rxn: Dict of dicts containing the reactions. (Mutable)
         cat: Name of the catalyst. Currently only string is supported.
-        time1: Time or times for which the concentrations and reactions shall be printed (str/int/float, or list).   
         sbalance: Site-balance equetion, string. 
         initialc: Initial conditions, string. 
         sodesolv: Calls SODE solver in Maple, string.  
@@ -281,18 +321,20 @@ def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse):
     
     print("# Heading " )
     print("restart: " )
-    print("PR:=1.0 : PP:= 0.0 : PU:= 0.0 : T:=300 :" )
+    print("T:=", conf.get("Reactor","reactortemp"), " : " )
+    for item in sorted(gas) : 
+        print('P'+item+":=",gas[item]['pressure']," : ") 
     
     print("\n# Kinetic constants")
-    for item in gas :
+    for item in sorted(gas) :
         print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
     for item in rxn :
         print(rxn[item]['kd'],  rxn[item]['ki']  )
     
     print("\n# Reaction rates:")
-    for item in gas :
+    for item in sorted(gas) :
         print(gas[item]['rads'+cat])
-    for item in rxn :
+    for item in sorted(rxn) :
         print(rxn[item]['rtd'],rxn[item]['rti'])
     
     print("\n# Site-balance equation: ")
@@ -308,15 +350,16 @@ def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse):
     print("\n# SODE Solver: ")
     print(sodesolv)
     
+    time1=conf['Reactor']['time1'] 
     print("\n# Preparing postprocessing: ")
     if   type(time1) is str :
-        print("timei:= "+time1)
+        print("timei:= "+time1+" : ")
     elif type(time1) is int :
-        print("timei:= "+time1)
+        print("timei:= "+"g".format(time1)+" : ")  
     elif type(time1) is float :
-        print("timei:= "+"{:.6E}".format(time1))
+        print("timei:= "+"g".format(time1)+" : ")
     elif type(time1) is list :
-        print("for timei in " + str(time1) + " do " )
+        print("for timei in " + str(time1) + " do ")
         # Lists are limited by [ ] and they should be printed as that. 
     else :
         print("\t Warning! time1 should be type string, float, integer, or list.")
@@ -342,7 +385,7 @@ def printtxt(gas,int,rxn,cat,time1,sbalance,initialc,sodesolv,rhsparse):
         print(rxn[item]['srtd'],rxn[item]['srti'])
     
     if type(time1) is list :  
-        print("od: ") 
+        print("\nod: \n ") 
     
 
 
