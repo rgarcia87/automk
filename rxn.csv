@@ -1,3 +1,6 @@
 Label   is1  is2   fs1   fs2    iO    e   frq            
- r1      R   None   P    None   0.00  1  [50,500,2000]   
- r2      P   None   U    None   0.40  1  [100,200,1000] 
+ r1      R   None   I1   None  -0.02  1  [50,500,2000]   
+ r2      R   None   I2   None   0.02  1  [50,500,2000] 
+ r3      I1  None   P    None   0.03  1  [50,500,2000] 
+ r4      I2  None   P    None  -0.03  1  [50,500,2000] 
+ r5      I2  None   U    None   0.40  1  [100,200,1000] 

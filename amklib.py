@@ -333,8 +333,8 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     """
     
     print("# Heading " )
-    print("restart: " )
-    print("catal:=",cat,": ") 
+    #print("restart: " )
+    print("catal:=\""+cat+"\": ") 
      
     print("T:=", conf.get("Reactor","reactortemp"), " : " )
     for item in sorted(gas) : 
@@ -372,23 +372,6 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     else : 
         print("timei:= "+time1+" : ")
       
-#    print("\n# Preparing postprocessing: ")
-#    if   type(time1) is str :
-#        print("timei:= "+time1+" : ")
-#    elif type(time1) is int :
-#        print("timei:= "+"g".format(time1)+" : ")  
-#    elif type(time1) is float :
-#        print("timei:= "+"g".format(time1)+" : ")
-#    elif type(time1) is list :
-#        print("for timei in " + str(time1) + " do ")
-#        # Lists are limited by [ ] and they should be printed as that. 
-#    else :
-#        print("\t Warning! time1 should be type string, float, integer, or list.")
-#        print("\t current type: "+type(time1))
-#        print("\t time1 contains: \n\t",time1) 
-#        print("\t automk abnormal termination. " ) 
-#        exit() 
-    
     print("S:=Solution(timei):")
     
     print("\n# Solution parser: ")
@@ -448,7 +431,7 @@ def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
             rxntmp[jtem]['rtd']="r"+jtem+":=(t)-> 0.00"
             rxntmp[jtem]['rti']=" : "
             rxntmp[jtem]['srtd']="sr"+jtem+":= 0.00"
-            rxntmp[jtem]['srti']=" : "
+            rxntmp[jtem]['srti']=" "
         printtxtsr(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
 
 def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) :  
@@ -465,7 +448,10 @@ def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) :
         sodesolv: Calls SODE solver in Maple, string.  
         rhsparse: Parser of surface concentrations, string. 
     """
-    
+    print("restart: ")
+    #print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',"\", catal, T,",ltp['prs'],"timei,sc"+cat+",",ltp['int'],ltp['gas'],ltp['rxn'][:-2],"\" ): \n") 
+    print("\nfprintf(",conf['General']['mapleoutput'],",\"catal,T,",ltp['prs'],"timei,sc"+cat+",",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," \\n \"): \n")
+     
     try : 
         if   conf['General']['pathdetector'] is "0" : # Single run 
             printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
@@ -486,6 +472,7 @@ def rxntime(conf) :
     Args: 
         conf: Configuration data. 
     """
+    
     time1raw=conf['Reactor']['time1']
     if time1raw.find(',') >0 : # If it is a list 
         timel=True 
