@@ -343,7 +343,7 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     print("\n# Kinetic constants")
     for item in sorted(gas) :
         print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
-    for item in rxn :
+    for item in sorted(rxn) :
         print(rxn[item]['kd'],  rxn[item]['ki']  )
     
     print("\n# Reaction rates:")
@@ -405,7 +405,7 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
     
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," ): ")
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,","sc"+cat+",",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," ): ")
       
     if timel :     
         print("\nod: \n ") 

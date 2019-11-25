@@ -4,7 +4,7 @@
 
 [Reactor] 
   reactortype="Differential" 
-  reactortemp=300             # Temperature in Kelvin
+  reactortemp=373             # Temperature in Kelvin
   time1=[ 1E-6, 1E-3, 1E0, 1E3, 1E6, 1E9, 1E12 ] # Reaction times   
 # time2=10800                 # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
   pressuredamptime=1          # Pressure damping time in seconds   
