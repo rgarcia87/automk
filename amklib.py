@@ -58,8 +58,8 @@ def fint(conf,int,ltp):
     """
     
     # Initialize variables related to intermediates. 
-    if conf.get("Reactor","sitebalancespecies")
-    sbalance="c"+conf.get("Reactor","sitebalancespecies")+":=(t)-> 1.0"  
+    #if conf.get("Reactor","sitebalancespecies") ????????
+    sbalance="c"+conf["Reactor"]["sitebalancespecies"]+":=(t)-> 1.0"  
     sodesolv="Solution:=dsolve({"   
     initialc="IC0:="
     rhsparse=""
@@ -68,7 +68,7 @@ def fint(conf,int,ltp):
         
     # Process intermediates
     for item in sorted(int) : 
-        if  int[item]['phase']=='cat' and int[item]!=conf.get("Reactor","sitebalancespecies") :  
+        if  int[item]['phase']=='cat' and int[item]!=conf["Reactor"]["sitebalancespecies"] :  
                
             # Initialize diff equations to count in which reactions each species participate.     
             int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
@@ -94,7 +94,14 @@ def fint(conf,int,ltp):
             # Initialize list of reactions in which each intermediate participate. 
             # Deprecated: No longer needed.              
             #int[item]['rxnlst']=[] 
-                         
+                 
+        if  int[item]['phase']=='gas' : 
+            # Get partial pressures 
+            try : 
+                int[item]['pressure']=conf['Pressures'][item] 
+            except : 
+                int[item]['pressure']=0 
+                                            
     # Close the site-balance equation     
     sbalance=sbalance+":" 
      
@@ -108,7 +115,7 @@ def fint(conf,int,ltp):
     return(int,sbalance,sodesolv,initialc,rhsparse) 
      
      
-def frxn(conf,int,rxn,cat,ltp):
+def frxn(conf,int,rxn,ltp):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
     It also expands the list of differential equations in "int"
@@ -160,6 +167,7 @@ def frxn(conf,int,rxn,cat,ltp):
             except: 
                 Gdi1=0.0
                 print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," which was not found.")
+                exit() 
          
         if rxn[item]['is2']=='None' :
             Gdi2=0.0
@@ -227,12 +235,12 @@ def frxn(conf,int,rxn,cat,ltp):
         # If there are no species in gas-phase, multiply by kB*T/h. 
         # In any case, multiply by exp(-Ga/kB*T) (Arrhenius Eq, or sticking coefficient).  
         # Not yet implemented: reactions at interface and diffusions. 
-        if   howmanygasd=0 :   
+        if   howmanygasd==0 :   
             rxn[item]['kd']+=kbh+"*T*exp(-max(0.0,"+\
                             "{:.6f}".format( rxn[item]['aGd'])+","+\
                             "{:.6f}".format( rxn[item]['dGd'])+\
                             ")/("+kbev+"*T)) ): "      
-        elif howmanygasd=1 :
+        elif howmanygasd==1 :
             rxn[item]['kd']+="*exp(-max(0.0,"+\
                             "{:.6f}".format( rxn[item]['aGd'])+","+\
                             "{:.6f}".format( rxn[item]['dGd'])+\
@@ -242,12 +250,12 @@ def frxn(conf,int,rxn,cat,ltp):
             print("Abnormal termination") 
             exit()    
           
-        if   howmanygasi=0 :   
+        if   howmanygasi==0 :   
             rxn[item]['ki']+=kbh+"*T*exp(-max(0.0,"+\
                             "{:.6f}".format( rxn[item]['aGi'])+","+\
                             "{:.6f}".format(-rxn[item]['dGd'])+\
                             ")/("+kbev+"*T)) ): "             
-        elif howmanygasi=1 :
+        elif howmanygasi==1 :
             rxn[item]['ki']+="*exp(-max(0.0,"+\
                             "{:.6f}".format( rxn[item]['aGi'])+","+\
                             "{:.6f}".format(-rxn[item]['dGd'])+\

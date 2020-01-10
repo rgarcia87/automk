@@ -7,6 +7,7 @@
 # time1=[ 1E-6, 1E-3, 1E0, 1E3, 1E6, 1E9, 1E12 ]  # Reaction times   
   time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
   pressuredamptime=1            # Pressure damping time in seconds, >1E-13 s. Otherwise no damping.    
+  sitebalancespecies='iO'       # Species that will center the site balance. 
                                  
 [Pressures]                       
   R=1                           # In atmospheres. Remaining species treated as zero.  
