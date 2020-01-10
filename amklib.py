@@ -28,17 +28,23 @@ def read(filename='./int.csv'):
     
     Args: 
         filename: Input file. The columns are separated by one or more spaces.
-            Energies must be provided in eV and frequencies in cm-1 Format: 
-            Label      E      frq     
-            i0101   -1.205    [50,500,2000]   
-            i0011   -0.701    [100,200,1000] 
-    
+            Energies must be provided in eV and frequencies in cm-1 Format:
+             label  phase  formula     G      e   mw    frq                     
+              gR     gas   CH3CHO      0.000  1  52.0   [99,500,2000]    
+              gP     gas   CH2OCH2     0.100  1  52.0   [100,200,1000]  
+              gU     gas   CH2CHOH     0.100  1  52.0   [120,350,1500] 
+              iO     cat   EmptySurf   0.000  1   0.0   []              
+              iR     cat   CH3CHO     -1.000  1  52.0   [99,500,2000]            
+              iI1    cat   CH2OCH2    -1.050  1  52.0   [100,200,1000] 
+              iI2    cat   CH2CHOH    -0.950  1  52.0   [100,200,1000] 
+              iP     cat   Unknown    -1.000  1  52.0   [100,200,1000]            
+              iU     cat   Unknown    -2.000  1  52.0   [120,350,1500]            
     Returns: 
         dicint: a dictionary containing at least the tags, energies, and frequencies of all species. 
     
     """
     
-    dic=pd.read_csv(filename, delim_whitespace=True, index_col='Label').T.to_dict()
+    dic=pd.read_csv(filename, delim_whitespace=True, index_col='label').T.to_dict()
     return(dic) 
      
 def fint(conf,int,ltp):
@@ -58,13 +64,27 @@ def fint(conf,int,ltp):
     """
     
     # Initialize variables related to intermediates. 
-    #if conf.get("Reactor","sitebalancespecies") ????????
     sbalance="c"+conf["Reactor"]["sitebalancespecies"]+":=(t)-> 1.0"  
     sodesolv="Solution:=dsolve({"   
     initialc="IC0:="
     rhsparse=""
     index=1
     ltp['int']=""
+     
+    # Get pressure damp 
+    try :      
+        pressuredamptime=float(conf['Reactor']['pressuredamptime'])   
+    except :   
+        pressuredamptime=1.0   
+    
+    if pressuredamptime>1E-13 : 
+        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))^2*"
+        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))^2*"
+    else : 
+        pdamp1=""
+        pdamp2=""
+        
+    ltp['prs']=""
         
     # Process intermediates
     for item in sorted(int) : 
@@ -99,6 +119,7 @@ def fint(conf,int,ltp):
             # Get partial pressures 
             try : 
                 int[item]['pressure']=conf['Pressures'][item] 
+                ltp['prs']+="P"+item+", " 
             except : 
                 int[item]['pressure']=0 
                                             
@@ -146,7 +167,8 @@ def frxn(conf,int,rxn,ltp):
         rxn[item]['srtd']="sr"+item+":= k"+item+"d" 
         rxn[item]['srti']="-k"+item+"i"
         howmanygasd=0
-        howmanygasi=0
+        howmanygasi=0        
+        
         # Use the is/fs states for each reaction to get their activation energies. 
         # Then write the formula for reaction rate according to their intermediates. 
         #     This formula is splitt between rtd (direct part) and rti (inverse part). 
@@ -154,81 +176,79 @@ def frxn(conf,int,rxn,ltp):
         if rxn[item]['is1']=='None' :
             Gdi1=0.0
         else:   
-            try:
+            try:       
                 Gdi1=int[rxn[item]['is1']]['G']
-                if int[item]['phase']=='int':  
-                    rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
-                    rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
-                    int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
-                elif int[item]['phase']=='gas':
-                    howmanygasd+=1 
-                    rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is1']
-                    rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is1'] 
-            except: 
-                Gdi1=0.0
+            except:                 
                 print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," which was not found.")
                 exit() 
-         
+            if   int[rxn[item]['is1']]['phase']=='cat':  
+                rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
+                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
+                int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
+            elif int[rxn[item]['is1']]['phase']=='gas':
+                howmanygasd+=1 
+                rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is1']
+                rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is1'] 
+                            
         if rxn[item]['is2']=='None' :
             Gdi2=0.0
         else:        
             try:
                 Gdi2=int[rxn[item]['is2']]['G']
-                if int[item]['phase']=='int':  
-                    rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
-                    rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
-                    int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
-                elif int[item]['phase']=='gas':
-                    howmanygasd+=1 
-                    rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is2']
-                    rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is2']
             except: 
-                Gdi2=0.0
                 print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," which was not found.")
-         
+                exit()
+            if   int[rxn[item]['is2']]['phase']=='cat':  
+                rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
+                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
+                int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
+            elif int[rxn[item]['is2']]['phase']=='gas':
+                howmanygasd+=1 
+                rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is2']
+                rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is2']
+             
         if rxn[item]['fs1']=='None' :
             Gdif=0.0
         else:
             try: 
                 Gdf1=int[rxn[item]['fs1']]['G']
-                if int[item]['phase']=='int': 
-                    rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
-                    rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
-                    int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
-                elif int[item]['phase']=='gas': 
-                    howmanygasi+=1 
-                    rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs1']
-                    rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs1'] 
             except: 
-                Gdf1=0.0
                 print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," which was not found.")
-         
+                exit() 
+            if   int[rxn[item]['fs1']]['phase']=='cat': 
+                rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
+                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
+                int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
+            elif int[rxn[item]['fs1']]['phase']=='gas': 
+                howmanygasi+=1 
+                rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs1']
+                rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs1'] 
+             
         if rxn[item]['fs2']=='None' :
             Gdf2=0.0
         else:        
             try: 
                 Gdf2=int[rxn[item]['fs2']]['G']
-                if int[item]['phase']=='int':
-                    rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
-                    rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
-                    int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
-                elif int[item]['phase']=='gas':
-                    howmanygasi+=1 
-                    rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs2']
-                    rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs2'] 
             except: 
-                Gdf2=0.0        
                 print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," which was not found.")
-            
-         
+                exit() 
+            if   int[rxn[item]['fs2']]['phase']=='cat':
+                rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
+                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
+                int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
+            elif int[rxn[item]['fs2']]['phase']=='gas':
+                howmanygasi+=1 
+                rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs2']
+                rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs2']             
+             
         # Close the formula with ":"
         rxn[item]['rti']=rxn[item]['rti']+" : "
           
         # Get reaction (dG) and (aG) activation energies for each reaction, both direct and inverse.  
         #print("\n",Gdi1,Gdi2,Gdf1,Gdf2)    
         rxn[item]['dGd']=Gdf1+Gdf2     -Gdi1-Gdi2    
-        rxn[item]['aGd']=rxn[item][cat]-Gdi1-Gdi2
-        rxn[item]['aGi']=rxn[item][cat]-Gdf1-Gdf2
+        rxn[item]['aGd']=rxn[item]['G']-Gdi1-Gdi2
+        rxn[item]['aGi']=rxn[item]['G']-Gdf1-Gdf2
         #print('\n \n' , rxn, '\n \n')    
                 
         # Kinetic constant for each reaction.         
@@ -269,7 +289,7 @@ def frxn(conf,int,rxn,ltp):
         ltp['rxn']+="sr"+item+", "
          
     return(rxn,int)
-      
+     
 def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
     # Before called printtxtsr
     """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
@@ -287,21 +307,21 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     
     print("# Heading " )
     #print("restart: " )
-    print("catal:=\""+cat+"\": ") 
      
     print("T:=", conf.get("Reactor","reactortemp"), " : " )
-    for item in sorted(gas) : 
-        print('P'+item+":=",gas[item]['pressure']," : ") 
+    for item in sorted(int) : 
+        if int[item]['phase']=='gas' :  
+            print('P'+item+":=",int[item]['pressure']," : ") 
     
     print("\n# Kinetic constants")
-    for item in sorted(gas) :
-        print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
+    #for item in sorted(gas) :
+    #    print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['kd'],  rxn[item]['ki']  )
     
     print("\n# Reaction rates:")
-    for item in sorted(gas) :
-        print(gas[item]['rads'+cat])
+    #for item in sorted(gas) :
+    #    print(gas[item]['rads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['rtd'],rxn[item]['rti'])
     
@@ -310,7 +330,8 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     
     print("\n# Differential equations: ")
     for item in sorted(int) :
-        print(int[item]['diff']," : ")
+        if  int[item]['phase']=='cat' and int[item]!=conf["Reactor"]["sitebalancespecies"] :  
+            print(int[item]['diff']," : ")
     
     print("\n# Initial conditions: ")
     print(initialc)
@@ -336,12 +357,12 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     print(  os.popen("echo \""+tmp[:-1]+"\" | sed 's/-c/-sc/g' " ).read()[:-1] )
     
     print("\n# Reaction rates after solver: ")
-    for item in sorted(gas) :
-        print(gas[item]['srads'+cat])
+    #for item in sorted(gas) :
+    #    print(gas[item]['srads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
     
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,","sc"+cat+",",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," ): ")
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
       
     if timel :     
         print("\nod: \n ") 

@@ -31,7 +31,7 @@ int,sbalance,sodesolv,initialc,rhsparse=amklib.fint(conf,int,ltp)
 
 # Prepare kinetic constants and rates of adsorption/desorption.
 # Also expand list of differential equations in "int" to include adsorption/desorptions. 
-int=amklib.fgas(conf,int,ltp) 
+#int=amklib.fgas(conf,int,ltp) 
 
 # Prepare kinetic constants and rates of all chemical steps. 
 # Also expand list of differential equations in "int" to include chemical steps. 
