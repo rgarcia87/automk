@@ -88,7 +88,9 @@ def fint(conf,int,ltp):
         
     # Process intermediates
     for item in sorted(int) : 
-        if  int[item]['phase']=='cat' and int[item]!=conf["Reactor"]["sitebalancespecies"] :  
+        if  int[item]['phase']=='cat' and int[item]!=conf["Reactor"]["sitebalancespecies"] :
+        ### THIS SHOULD BE THE SOLUTION:
+        #if  int[item]['phase']=='cat' and item != conf["Reactor"]["sitebalancespecies"] :    
                
             # Initialize diff equations to count in which reactions each species participate.     
             int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
@@ -186,9 +188,13 @@ def frxn(conf,int,rxn,ltp):
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
                 int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
             elif int[rxn[item]['is1']]['phase']=='gas':
-                howmanygasd+=1 
-                rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is1']
-                rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is1'] 
+                howmanygasd+=1
+                rxn[item]['kd']+="101325*P"+rxn[item]['is1']+\
+                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
+                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
+                              "{:.2f}".format(int[rxn[item]['is1']]['mw'])+"*10^(-27)))" 
+                rxn[item]['rtd']=rxn[item]['rtd']+"*P"+rxn[item]['is1']
+                rxn[item]['srtd']=rxn[item]['srtd']+"*P"+rxn[item]['is1'] 
                             
         if rxn[item]['is2']=='None' :
             Gdi2=0.0
@@ -204,8 +210,12 @@ def frxn(conf,int,rxn,ltp):
                 int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
             elif int[rxn[item]['is2']]['phase']=='gas':
                 howmanygasd+=1 
-                rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is2']
-                rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is2']
+                rxn[item]['kd']+="101325*P"+rxn[item]['is2']+\
+                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
+                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
+                              "{:.2f}".format(int[rxn[item]['is2']]['mw'])+"*10^(-27)))" 
+                rxn[item]['rtd']=rxn[item]['rtd']+"*P"+rxn[item]['is2']
+                rxn[item]['srtd']=rxn[item]['srtd']+"*P"+rxn[item]['is2']
              
         if rxn[item]['fs1']=='None' :
             Gdif=0.0
@@ -221,8 +231,12 @@ def frxn(conf,int,rxn,ltp):
                 int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
             elif int[rxn[item]['fs1']]['phase']=='gas': 
                 howmanygasi+=1 
-                rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs1']
-                rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs1'] 
+                rxn[item]['kd']+="101325*P"+rxn[item]['fs1']+\
+                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
+                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
+                              "{:.2f}".format(int[rxn[item]['fs1']]['mw'])+"*10^(-27)))" 
+                rxn[item]['rti']=rxn[item]['rti']+"*P"+rxn[item]['fs1']
+                rxn[item]['srti']=rxn[item]['srti']+"*P"+rxn[item]['fs1'] 
              
         if rxn[item]['fs2']=='None' :
             Gdf2=0.0
@@ -238,8 +252,12 @@ def frxn(conf,int,rxn,ltp):
                 int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
             elif int[rxn[item]['fs2']]['phase']=='gas':
                 howmanygasi+=1 
-                rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs2']
-                rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs2']             
+                rxn[item]['kd']+="101325*P"+rxn[item]['fs2']+\
+                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
+                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
+                              "{:.2f}".format(int[rxn[item]['fs2']]['mw'])+"*10^(-27)))" 
+                rxn[item]['rti']=rxn[item]['rti']+"*P"+rxn[item]['fs2']
+                rxn[item]['srti']=rxn[item]['srti']+"*P"+rxn[item]['fs2']             
              
         # Close the formula with ":"
         rxn[item]['rti']=rxn[item]['rti']+" : "
@@ -362,7 +380,7 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
     
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n", catal, T,',ltp['prs'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['General']['catalyst'],',T,',ltp['prs'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
       
     if timel :     
         print("\nod: \n ") 

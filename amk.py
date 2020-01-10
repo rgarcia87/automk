@@ -9,6 +9,7 @@ Possible expansions:
     * Non-isobaric   reactors, P dependent on time.  
     * Cycle the model making the energies depend on two or more parameters (PCA). 
     * Consider coverage effects.    
+    * Put area of active site. 
 """
 
 # Load libraries 
