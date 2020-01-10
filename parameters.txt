@@ -1,5 +1,4 @@
 [General]
-  pathdetector=0                # 1 to deactivate one intermediate at a time to see its effect in the microkinetics. Default: 0. 
   mapleoutput="debug-04-1.xls"  # Output files
                                  
 [Reactor]                        

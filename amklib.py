@@ -41,7 +41,7 @@ def read(filename='./int.csv'):
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='Label').T.to_dict()
     return(dic) 
      
-def fint(conf,int,cat,ltp):
+def fint(conf,int,ltp):
     """This function process the "intermediates" dataframe to generate 
     the site-balance equation, the SODE-solver, and the initial conditions as clean surface. 
     It also initializes the list of differential equations.  
@@ -49,7 +49,6 @@ def fint(conf,int,cat,ltp):
     Args: 
         conf: Configuration data.
         int: Dict of dicts containing at least a list of intermediates as index. 
-        cat: Name of the catalyst. Currently only string is supported. 
     
     Returns:
         int:      Expanded dict of dicts containing also the list of differential equations. (Mutable)
@@ -59,7 +58,8 @@ def fint(conf,int,cat,ltp):
     """
     
     # Initialize variables related to intermediates. 
-    sbalance="c"+cat+":=(t)-> 1.0"  
+    if conf.get("Reactor","sitebalancespecies")
+    sbalance="c"+conf.get("Reactor","sitebalancespecies")+":=(t)-> 1.0"  
     sodesolv="Solution:=dsolve({"   
     initialc="IC0:="
     rhsparse=""
@@ -68,130 +68,47 @@ def fint(conf,int,cat,ltp):
         
     # Process intermediates
     for item in sorted(int) : 
-        
-        # Initialize diff equations to count in which reactions each species participate.     
-        int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
-          
-        # Initialize list of reactions in which each intermediate participate. 
-        int[item]['gaslst']=[] 
-        int[item]['rxnlst']=[] 
-        
-        # Prepare site balance  
-        sbalance=sbalance+" -c"+item+"(t)"
-        
-        # Prepare list of differential equations for the SODE solver 
-        sodesolv=sodesolv+"eqd"+item+", "
-        
-        # Prepare list of default initial conditions as clean surface
-        initialc=initialc+" c"+item+"(0.0)=0.0,"
-          
-        # Prepare reader of concentrations from solver  
-        index+=1 
-        #print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
-        rhsparse+="sc"+item+":=rhs(S["+str(index)+"]) : "
-        #print(rhsparse)  
-         
-        # List of reactions for fprintf function in Maple 
-        ltp['int']+="sc"+item+", " 
-        
+        if  int[item]['phase']=='cat' and int[item]!=conf.get("Reactor","sitebalancespecies") :  
+               
+            # Initialize diff equations to count in which reactions each species participate.     
+            int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
+             
+            # Prepare site balance  
+            sbalance=sbalance+" -c"+item+"(t)"
+             
+            # Prepare list of differential equations for the SODE solver 
+            sodesolv=sodesolv+"eqd"+item+", "
+             
+            # Prepare list of default initial conditions as clean surface
+            initialc=initialc+" c"+item+"(0.0)=0.0,"
+              
+            # Prepare parser of concentrations after SODE is solved  
+            index+=1 
+            #print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
+            rhsparse+="sc"+item+":=rhs(S["+str(index)+"]) : "
+            #print(rhsparse)  
+             
+            # List of reactions for fprintf function in Maple 
+            ltp['int']+="sc"+item+", " 
+              
+            # Initialize list of reactions in which each intermediate participate. 
+            # Deprecated: No longer needed.              
+            #int[item]['rxnlst']=[] 
+                         
     # Close the site-balance equation     
     sbalance=sbalance+":" 
-    
+     
     # Close the sodesolv
     sodesolv=sodesolv+"IC0}, numeric, method=rosenbrock, maxfun=0, abserr=1E-16, interr=false);"
-    
+     
     # In the initial conditions, replace the last comma by a colon 
     initialc=initialc[:-1]+" : "
       
     #print("\n",sbalance,"\n",initialc,"\n",sodesolv) 
     return(int,sbalance,sodesolv,initialc,rhsparse) 
      
-def fgas(conf,gas,int,cat,ltp):
-    """Subroutine that expands the "gas" dictionary of dictionaries to include 
-    the kinetic constants and rates of adsorption/desorptions.  
-    It also expands the list of differential equations in "int"
-    and the list of adsorption/desorptions in which each intermediate participates (reaction-like). 
-    
-    Args: 
-        conf: Configuration data. 
-        gas: Dict of dicts containing the volatile species. (Mutable)
-        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
-        cat: Name of the catalyst. Currently only string is supported.
-    
-    Returns: 
-        gas: Expanded dict of dicts containing adsorption/desorption constants and rates. (Mutable)
-        int: Expanded dict of dicts with list of differential equations updated with adsorption/desorptions. (Mutable)
-    """
-    
-    # Get pressure damp 
-    try :      
-        pressuredamptime=float(conf['Reactor']['pressuredamptime'])   
-    except :   
-        pressuredamptime=1.0   
-    
-    if pressuredamptime>1E-13 : 
-        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))^2*"
-        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))^2*"
-    else : 
-        pdamp1=""
-        pdamp2=""
-        
-    ltp['prs']=""
-    ltp['gas']=""
      
-    # Process adsorption and desorptions 
-    for item in sorted(gas) : 
-        
-        # Get partial pressures 
-        try : 
-            gas[item]['pressure']=conf['Pressures'][item] 
-        except : 
-            gas[item]['pressure']=0  
-          
-        # Adsorption energy 
-        DGads=int[item][cat]-gas[item][cat]
-         
-        # Activation energy of adsorption
-        aGads=gas[item][cat]-gas[item]['gas'] 
-         
-        # Activation energy of desorption
-        aGdes=gas[item][cat]-gas[item]['gas']
-         
-        # Kinetic constant: adsorption of gas to cat
-        gas[item]['kads'+cat]="kads"+item+cat+":=evalf(101325*P"+item+"*exp(-max("+\
-                              "0.00,"+"{:.6f}".format(aGads)+","+"{:.6f}".format(DGads)+\
-                              ")/(0.861733E-4*T))/(1.7492150414*10^19*sqrt(1.6605390400*"+\
-                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+"{:.2f}".format(gas[item]['mw'])+\
-                              "*10^(-27)))) : " 
-         
-        # Kinetic constant: desorption of volatile species from cat to gas. 
-        gas[item]['kdes'+cat]="kdes"+item+cat+":=evalf("+kbh+"*T*exp(-max("+\
-                              "0.00,"+"{:.6f}".format(aGdes)+","+"{:.6f}".format(-DGads)+\
-                              ")/("+kbev+"*T)) ): "
-        
-        # Formula: adsorption/desorption rate of volatile adsorbates
-        gas[item]['rads'+cat]="rads"+item+cat+":=(t)-> "+pdamp1+"kads"+item+cat+"*c"+cat+"(t)"+\
-                              "-kdes"+item+cat+"*c"+item+"(t) : "  
-         
-        # Formula: adsorption/desorption rate of volatile adsorbates after solver
-        gas[item]['srads'+cat]="srads"+item+cat+":= "   +pdamp2+"kads"+item+cat+"*sc"+cat+\
-                               "-kdes"+item+cat+"*sc"+item+" : " 
-             
-        # Update differential equations for the species
-        int[item]['diff']=int[item]['diff']+"+rads"+item+cat+"(t)"
-         
-        # Update list of adsorption/desorptions in which each intermediate participates. 
-        int[item]['gaslst'].append(item)    
-        # Example: int['P']['gaslst'] will append 'P' as item. 
-        # This must be modified somewhat to differentiate the species in gas and adsorbed.  
-        
-        # List of gas-phase species for the fprintf Maple function 
-        ltp['prs']+="P"+item+", " 
-        ltp['gas']+="srads"+item+cat+", "   
-        
-    return(gas,int)
-
-def frxn(conf,rxn,int,cat,ltp):
+def frxn(conf,int,rxn,cat,ltp):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
     It also expands the list of differential equations in "int"
@@ -201,7 +118,6 @@ def frxn(conf,rxn,int,cat,ltp):
         conf: Configuration data.
         rxn: Dict of dicts containing the reactions. (Mutable)
         int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
-        cat: Name of the catalyst. Currently only string is supported.
     
     Returns: 
         rxn: Expanded dict of dicts containing adsorption/desorption constants and rates. (Mutable)
@@ -215,63 +131,87 @@ def frxn(conf,rxn,int,cat,ltp):
         rxn[item]['aGd']=""
         rxn[item]['aGi']=""
         rxn[item]['kd']=""
-        rxn[item]['ki']=""    
+        rxn[item]['ki']=""
+        rxn[item]['kd']="k"+item+"d:=evalf("   
+        rxn[item]['ki']="k"+item+"i:=evalf("    
         rxn[item]['rtd']="r"+item+":=(t)-> k"+item+"d"
         rxn[item]['rti']="-k"+item+"i"
         rxn[item]['srtd']="sr"+item+":= k"+item+"d" 
         rxn[item]['srti']="-k"+item+"i"
-        
+        howmanygasd=0
+        howmanygasi=0
         # Use the is/fs states for each reaction to get their activation energies. 
         # Then write the formula for reaction rate according to their intermediates. 
         #     This formula is splitt between rtd (direct part) and rti (inverse part). 
-        # At the same time, do a list of reactions for each intermediate.     
+        # If a rectant is in gas phase, include a Hertz-Knudsen term in the constant.    
         if rxn[item]['is1']=='None' :
             Gdi1=0.0
-        else :   
-            try: 
-                Gdi1=int[rxn[item]['is1']][cat]
-                rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
-                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
-                int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
+        else:   
+            try:
+                Gdi1=int[rxn[item]['is1']]['G']
+                if int[item]['phase']=='int':  
+                    rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
+                    rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
+                    int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
+                elif int[item]['phase']=='gas':
+                    howmanygasd+=1 
+                    rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is1']
+                    rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is1'] 
             except: 
                 Gdi1=0.0
                 print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," which was not found.")
          
         if rxn[item]['is2']=='None' :
             Gdi2=0.0
-        else :        
-            try: 
-                Gdi2=int[rxn[item]['is2']][cat]
-                rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
-                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
-                int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
+        else:        
+            try:
+                Gdi2=int[rxn[item]['is2']]['G']
+                if int[item]['phase']=='int':  
+                    rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
+                    rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
+                    int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
+                elif int[item]['phase']=='gas':
+                    howmanygasd+=1 
+                    rxn[item]['rtd']=rxn[item]['rtd']+"*p"+rxn[item]['is2']
+                    rxn[item]['srtd']=rxn[item]['srtd']+"*p"+rxn[item]['is2']
             except: 
                 Gdi2=0.0
                 print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," which was not found.")
          
         if rxn[item]['fs1']=='None' :
             Gdif=0.0
-        else :
+        else:
             try: 
-                Gdf1=int[rxn[item]['fs1']][cat]
-                rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
-                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
-                int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
+                Gdf1=int[rxn[item]['fs1']]['G']
+                if int[item]['phase']=='int': 
+                    rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
+                    rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
+                    int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
+                elif int[item]['phase']=='gas': 
+                    howmanygasi+=1 
+                    rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs1']
+                    rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs1'] 
             except: 
                 Gdf1=0.0
                 print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," which was not found.")
          
         if rxn[item]['fs2']=='None' :
             Gdf2=0.0
-        else :        
+        else:        
             try: 
-                Gdf2=int[rxn[item]['fs2']][cat]
-                rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
-                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
-                int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
+                Gdf2=int[rxn[item]['fs2']]['G']
+                if int[item]['phase']=='int':
+                    rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
+                    rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
+                    int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
+                elif int[item]['phase']=='gas':
+                    howmanygasi+=1 
+                    rxn[item]['rti']=rxn[item]['rti']+"*p"+rxn[item]['fs2']
+                    rxn[item]['srti']=rxn[item]['srti']+"*p"+rxn[item]['fs2'] 
             except: 
                 Gdf2=0.0        
                 print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," which was not found.")
+            
          
         # Close the formula with ":"
         rxn[item]['rti']=rxn[item]['rti']+" : "
@@ -282,50 +222,55 @@ def frxn(conf,rxn,int,cat,ltp):
         rxn[item]['aGd']=rxn[item][cat]-Gdi1-Gdi2
         rxn[item]['aGi']=rxn[item][cat]-Gdf1-Gdf2
         #print('\n \n' , rxn, '\n \n')    
-         
-        # Kinetic constant for each reaction. 
-        rxn[item]['kd']="k"+item+"d:=evalf("+kbh+"*T*exp(-max(0.0,"+\
-                        "{:.6f}".format( rxn[item]['aGd'])+","+\
-                        "{:.6f}".format( rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ): "
-        rxn[item]['ki']="k"+item+"i:=evalf("+kbh+"*T*exp(-max(0.0,"+\
-                        "{:.6f}".format( rxn[item]['aGi'])+","+\
-                        "{:.6f}".format(-rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ): "
-        
-        # Update list of reactions in which each intermediate participates. 
-        try: 
-            int[rxn[item]['is1']]['rxnlst'].append(item)    
-        except: 
-            pass 
-        try: 
-            int[rxn[item]['is2']]['rxnlst'].append(item)   
-        except: 
-            pass 
-        try: 
-            int[rxn[item]['fs1']]['rxnlst'].append(item)    
-        except: 
-            pass 
-        try: 
-            int[rxn[item]['fs2']]['rxnlst'].append(item)   
-        except: 
-            pass 
+                
+        # Kinetic constant for each reaction.         
+        # If there are no species in gas-phase, multiply by kB*T/h. 
+        # In any case, multiply by exp(-Ga/kB*T) (Arrhenius Eq, or sticking coefficient).  
+        # Not yet implemented: reactions at interface and diffusions. 
+        if   howmanygasd=0 :   
+            rxn[item]['kd']+=kbh+"*T*exp(-max(0.0,"+\
+                            "{:.6f}".format( rxn[item]['aGd'])+","+\
+                            "{:.6f}".format( rxn[item]['dGd'])+\
+                            ")/("+kbev+"*T)) ): "      
+        elif howmanygasd=1 :
+            rxn[item]['kd']+="*exp(-max(0.0,"+\
+                            "{:.6f}".format( rxn[item]['aGd'])+","+\
+                            "{:.6f}".format( rxn[item]['dGd'])+\
+                            ")/("+kbev+"*T)) ): "   
+        else : 
+            print("WARNING! direct reaction #",item,"has",howmanygasd,"gas/aq reactants.") 
+            print("Abnormal termination") 
+            exit()    
+          
+        if   howmanygasi=0 :   
+            rxn[item]['ki']+=kbh+"*T*exp(-max(0.0,"+\
+                            "{:.6f}".format( rxn[item]['aGi'])+","+\
+                            "{:.6f}".format(-rxn[item]['dGd'])+\
+                            ")/("+kbev+"*T)) ): "             
+        elif howmanygasi=1 :
+            rxn[item]['ki']+="*exp(-max(0.0,"+\
+                            "{:.6f}".format( rxn[item]['aGi'])+","+\
+                            "{:.6f}".format(-rxn[item]['dGd'])+\
+                            ")/("+kbev+"*T)) ): "   
+        else : 
+            print("WARNING! reverse reaction #",item,"has",howmanygasd,"gas/aq reactants.") 
+            print("Abnormal termination") 
+            exit()           
         
         # List of reactions for fprintf function in Maple 
         ltp['rxn']+="sr"+item+", "
          
     return(rxn,int)
       
-def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
+def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
+    # Before called printtxtsr
     """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
       
     Args: 
         conf: Configuration data. 
             time1: Time or times for which the concentrations and reactions shall be printed (str/int/float, or list).
-        gas: Dict of dicts containing molecules in gas phase. (Mutable) 
-        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
-        rxn: Dict of dicts containing the reactions. (Mutable)
-        cat: Name of the catalyst. Currently only string is supported.
+        int: Dict of dicts listing the intermediates by an index. (Mutable)
+        rxn: Dict of dicts for reactions. (Mutable)
         sbalance: Site-balance equetion, string. 
         initialc: Initial conditions, string. 
         sodesolv: Calls SODE solver in Maple, string.  
@@ -395,76 +340,6 @@ def printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp):
       
     print()
     
-def printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp): 
-    """Subroutine that prints microkinetics in Maple removing an intermediate each time.  
-        It cals subroutine printtxt. 
-        
-    Args: 
-        conf: Configuration data. 
-        gas: Dict of dicts containing molecules in gas phase. (Mutable) 
-        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
-        rxn: Dict of dicts containing the reactions. (Mutable)
-        cat: Name of the catalyst. Currently only string is supported.
-        sbalance: Site-balance equetion, string. 
-        initialc: Initial conditions, string. 
-        sodesolv: Calls SODE solver in Maple, string.  
-        rhsparse: Parser of surface concentrations, string. 
-    """ 
-        
-    for item in sorted(int) : 
-        inttmp = copy.deepcopy(int)
-        gastmp = copy.deepcopy(gas)  
-        rxntmp = copy.deepcopy(rxn)  
-         
-        inttmp[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)=0.00 "
-        #print(item) 
-        #print(int[item]['gaslst']) 
-        #print(int[item]['rxnlst']) 
-        for jtem in int[item]['gaslst'] : 
-            gastmp[jtem]['kads'+cat]="kads"+jtem+cat+":=evalf(0.0): "
-            gastmp[jtem]['kdes'+cat]="kdes"+jtem+cat+":=evalf(0.0): "
-            gastmp[jtem]['rads'+cat]="rads"+item+cat+":=(t)-> 0.00 :"
-            gastmp[jtem]['srads'+cat]="srads"+jtem+cat+":=0.00 :" 
-        for jtem in int[item]['rxnlst'] : 
-            rxntmp[jtem]['kd']="k"+jtem+"d:=evalf(0.0): "   
-            rxntmp[jtem]['ki']="k"+jtem+"i:=evalf(0.0): "   
-            rxntmp[jtem]['rtd']="r"+jtem+":=(t)-> 0.00"
-            rxntmp[jtem]['rti']=" : "
-            rxntmp[jtem]['srtd']="sr"+jtem+":= 0.00"
-            rxntmp[jtem]['srti']=" "
-        printtxtsr(conf,gastmp,inttmp,rxntmp,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
-
-def printtxt(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) :  
-    """Subroutine that chooses what to print 
-        
-    Args: 
-        conf: Configuration data. 
-        gas: Dict of dicts containing molecules in gas phase. (Mutable) 
-        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
-        rxn: Dict of dicts containing the reactions. (Mutable)
-        cat: Name of the catalyst. Currently only string is supported.
-        sbalance: Site-balance equetion, string. 
-        initialc: Initial conditions, string. 
-        sodesolv: Calls SODE solver in Maple, string.  
-        rhsparse: Parser of surface concentrations, string. 
-    """
-    print("restart: ")
-    #print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',"\", catal, T,",ltp['prs'],"timei,sc"+cat+",",ltp['int'],ltp['gas'],ltp['rxn'][:-2],"\" ): \n") 
-    print("\nfprintf(",conf['General']['mapleoutput'],",\"catal,T,",ltp['prs'],"timei,sc"+cat+",",ltp['int'],ltp['gas'],ltp['rxn'][:-2]," \\n \"): \n")
-     
-    try : 
-        if   conf['General']['pathdetector'] is "0" : # Single run 
-            printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
-        elif conf['General']['pathdetector'] is "1" : # Path detector: multiple runs 
-            printtxtpd(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
-        else :   
-            print("Warning, [General]pathdetector should be 0 or 1. Assuming 0.") 
-            printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp) 
-    except: 
-        printtxtsr(conf,gas,int,rxn,cat,sbalance,initialc,sodesolv,rhsparse,ltp)
-        print("Warning, [General]pathdetector not found. Assuming 0. ")
-    print("fclose(",conf['General']['mapleoutput'],"):\n" )
- 
 def rxntime(conf) : 
     """Subroutine that interpretes the time.   
         Requires the ast package 
@@ -477,7 +352,7 @@ def rxntime(conf) :
     if time1raw.find(',') >0 : # If it is a list 
         timel=True 
         time1=ast.literal_eval(time1raw)
-    else :                  # If it is an unique value  
+    else :                     # If it is an unique value  
         timel=False 
         time1=time1raw
     return(time1,timel)
