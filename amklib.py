@@ -85,12 +85,10 @@ def fint(conf,int,ltp):
         pdamp2=""
         
     ltp['prs']=""
-        
+      
     # Process intermediates
     for item in sorted(int) : 
-        if  int[item]['phase']=='cat' and int[item]!=conf["Reactor"]["sitebalancespecies"] :
-        ### THIS SHOULD BE THE SOLUTION:
-        #if  int[item]['phase']=='cat' and item != conf["Reactor"]["sitebalancespecies"] :    
+        if  int[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] :      
                
             # Initialize diff equations to count in which reactions each species participate.     
             int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
@@ -181,12 +179,13 @@ def frxn(conf,int,rxn,ltp):
             try:       
                 Gdi1=int[rxn[item]['is1']]['G']
             except:                 
-                print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," which was not found.")
+                print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," whose energy was not found.")
                 exit() 
             if   int[rxn[item]['is1']]['phase']=='cat':  
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
-                int[rxn[item]['is1']]['diff']=int[rxn[item]['is1']]['diff']+"-r"+item+"(t)"
+                if rxn[item]['is1']!=conf["Reactor"]["sitebalancespecies"] : 
+                    int[rxn[item]['is1']]['diff']+="-r"+item+"(t)"
             elif int[rxn[item]['is1']]['phase']=='gas':
                 howmanygasd+=1
                 rxn[item]['kd']+="101325*P"+rxn[item]['is1']+\
@@ -202,12 +201,13 @@ def frxn(conf,int,rxn,ltp):
             try:
                 Gdi2=int[rxn[item]['is2']]['G']
             except: 
-                print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," which was not found.")
+                print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," whose energy was not found.")
                 exit()
             if   int[rxn[item]['is2']]['phase']=='cat':  
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
-                int[rxn[item]['is2']]['diff']=int[rxn[item]['is2']]['diff']+"-r"+item+"(t)"
+                if rxn[item]['is2']!=conf["Reactor"]["sitebalancespecies"] : 
+                    int[rxn[item]['is2']]['diff']+="-r"+item+"(t)"
             elif int[rxn[item]['is2']]['phase']=='gas':
                 howmanygasd+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['is2']+\
@@ -223,12 +223,13 @@ def frxn(conf,int,rxn,ltp):
             try: 
                 Gdf1=int[rxn[item]['fs1']]['G']
             except: 
-                print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," which was not found.")
+                print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," whose energy was not found.")
                 exit() 
             if   int[rxn[item]['fs1']]['phase']=='cat': 
                 rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
                 rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
-                int[rxn[item]['fs1']]['diff']=int[rxn[item]['fs1']]['diff']+"+r"+item+"(t)"
+                if rxn[item]['fs1']!=conf["Reactor"]["sitebalancespecies"] : 
+                    int[rxn[item]['fs1']]['diff']+="+r"+item+"(t)"
             elif int[rxn[item]['fs1']]['phase']=='gas': 
                 howmanygasi+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['fs1']+\
@@ -244,12 +245,13 @@ def frxn(conf,int,rxn,ltp):
             try: 
                 Gdf2=int[rxn[item]['fs2']]['G']
             except: 
-                print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," which was not found.")
+                print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," whose energy was not found.")
                 exit() 
             if   int[rxn[item]['fs2']]['phase']=='cat':
                 rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
                 rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
-                int[rxn[item]['fs2']]['diff']=int[rxn[item]['fs2']]['diff']+"+r"+item+"(t)"
+                if rxn[item]['fs2']!=conf["Reactor"]["sitebalancespecies"] : 
+                    int[rxn[item]['fs2']]['diff']+="+r"+item+"(t)"
             elif int[rxn[item]['fs2']]['phase']=='gas':
                 howmanygasi+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['fs2']+\
@@ -348,7 +350,7 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     
     print("\n# Differential equations: ")
     for item in sorted(int) :
-        if  int[item]['phase']=='cat' and int[item]!=conf["Reactor"]["sitebalancespecies"] :  
+        if  int[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] : 
             print(int[item]['diff']," : ")
     
     print("\n# Initial conditions: ")
