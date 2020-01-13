@@ -21,7 +21,24 @@ def readconf(filename='./parameters.txt'):
     conf=configparser.ConfigParser(inline_comment_prefixes=('#'))
     conf.read(filename)
     return conf 
-      
+    
+def rxntime(conf) : 
+    """Subroutine that interpretes the time.   
+        Requires the ast package 
+    
+    Args: 
+        conf: Configuration data. 
+    """
+    
+    time1raw=conf['Reactor']['time1']
+    if time1raw.find(',') >0 : # If it is a list 
+        timel=True 
+        time1=ast.literal_eval(time1raw)
+    else :                     # If it is an unique value  
+        timel=False 
+        time1=time1raw
+    return(time1,timel)
+  
 def read(filename='./int.csv'): 
     """This function reads a file containing information of catalysts, gas, intermediates, or reactions. 
     It requires pandas to be loaded.  
@@ -69,7 +86,9 @@ def fint(conf,int,ltp):
     initialc="IC0:="
     rhsparse=""
     index=1
-    ltp['int']=""
+    
+    # List to print from postprocessing: intermediates: Initialize with site-balance species. 
+    ltp['int']="sc"+conf["Reactor"]["sitebalancespecies"]+", "     
      
     # Get pressure damp 
     try :      
@@ -172,7 +191,9 @@ def frxn(conf,int,rxn,ltp):
         # Use the is/fs states for each reaction to get their activation energies. 
         # Then write the formula for reaction rate according to their intermediates. 
         #     This formula is splitt between rtd (direct part) and rti (inverse part). 
-        # If a rectant is in gas phase, include a Hertz-Knudsen term in the constant.    
+        # Then update the differential equations in which each adsorbed species participates. 
+        # If a rectant is in gas phase, include a Hertz-Knudsen term in the constant 
+        #     and its pressure as variable in the reaction rate.      
         if rxn[item]['is1']=='None' :
             Gdi1=0.0
         else:   
@@ -388,21 +409,5 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
         print("\nod: \n ") 
       
     print()
-    
-def rxntime(conf) : 
-    """Subroutine that interpretes the time.   
-        Requires the ast package 
-    
-    Args: 
-        conf: Configuration data. 
-    """
-    
-    time1raw=conf['Reactor']['time1']
-    if time1raw.find(',') >0 : # If it is a list 
-        timel=True 
-        time1=ast.literal_eval(time1raw)
-    else :                     # If it is an unique value  
-        timel=False 
-        time1=time1raw
-    return(time1,timel)
+
     
