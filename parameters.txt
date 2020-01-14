@@ -1,4 +1,4 @@
-[General]
+[General]                         
   mapleoutput="debug-04-1.xls"  # Output files
   catalyst="Cu100"              # 
                                  
@@ -11,5 +11,5 @@
   sitebalancespecies=iO         # Species that will center the site balance. 
                                  
 [Pressures]                       
-  gR=1                           # In atmospheres. Remaining species treated as zero.  
+  gR=1                          # In atmospheres. Remaining species treated as zero.  
  

@@ -105,21 +105,25 @@ def fint(conf,int,ltp):
         
     ltp['prs']=""
       
-    # Process intermediates
-    for item in sorted(int) : 
+    # Process intermediates, starting by adsorbed (cat), then gas. 
+    for item in sorted(int) :  
+   #for key,value in sorted(int).items() : #key~item ; value~int[item] (all line)             
+   #so the input of the sub-function will be the key and value
         if  int[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] :      
+            # A surface species 
                
             # Initialize diff equations to count in which reactions each species participate.     
             int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
+            #value['diff']="eqd"+key+":=diff(c"+key+"(t),t)="
              
             # Prepare site balance  
-            sbalance=sbalance+" -c"+item+"(t)"
+            sbalance+=" -c"+item+"(t)"
              
             # Prepare list of differential equations for the SODE solver 
-            sodesolv=sodesolv+"eqd"+item+", "
+            sodesolv+="eqd"+item+", "
              
             # Prepare list of default initial conditions as clean surface
-            initialc=initialc+" c"+item+"(0.0)=0.0,"
+            initialc+=" c"+item+"(0.0)=0.0,"
               
             # Prepare parser of concentrations after SODE is solved  
             index+=1 
@@ -134,13 +138,18 @@ def fint(conf,int,ltp):
             # Deprecated: No longer needed.              
             #int[item]['rxnlst']=[] 
                  
-        if  int[item]['phase']=='gas' : 
+        elif int[item]['phase']=='gas' : 
             # Get partial pressures 
             try : 
                 int[item]['pressure']=conf['Pressures'][item] 
-                ltp['prs']+="P"+item+", " 
             except : 
                 int[item]['pressure']=0 
+            # Generate list of pressures
+            ltp['prs']+="P"+item+", "
+              
+        elif item!=conf["Reactor"]["sitebalancespecies"] : 
+            print("Unknown phase for ",item," \n I only recognize 'cat' and 'gas'") 
+            exit()
                                             
     # Close the site-balance equation     
     sbalance=sbalance+":" 
@@ -402,12 +411,18 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     #    print(gas[item]['srads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
-    
+     
+    # Print labels
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",','catalyst,"T","', [item for item in ltp['prs'] ] ,'",timei,'    )
+     
+    # Print results 
     print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['General']['catalyst'],',T,',ltp['prs'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
-      
+    # REMOVE ME:  
+    print(ltp['prs']) 
+     
     if timel :     
         print("\nod: \n ") 
       
     print()
-
+     
     
