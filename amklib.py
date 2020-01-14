@@ -64,17 +64,17 @@ def read(filename='./int.csv'):
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='label').T.to_dict()
     return(dic) 
      
-def fint(conf,int,ltp):
+def fint(conf,itm,ltp):
     """This function process the "intermediates" dataframe to generate 
     the site-balance equation, the SODE-solver, and the initial conditions as clean surface. 
     It also initializes the list of differential equations.  
     
     Args: 
         conf: Configuration data.
-        int: Dict of dicts containing at least a list of intermediates as index. 
+        itm: Dict of dicts containing at least a list of intermediates as index. 
     
     Returns:
-        int:      Expanded dict of dicts containing also the list of differential equations. (Mutable)
+        itm:      Expanded dict of dicts containing also the list of differential equations. (Mutable)
         sbalance: Site-balance equation. (Unmutable)
         sodesolv: Input of the SODE-solver. (Unmutable)   
         initialc: Initial conditions as clean surface. (Unmutable) 
@@ -88,7 +88,7 @@ def fint(conf,int,ltp):
     index=1
     
     # List to print from postprocessing: intermediates: Initialize with site-balance species. 
-    ltp['int']="sc"+conf["Reactor"]["sitebalancespecies"]+", "     
+    ltp['itm']=["sc"+conf["Reactor"]["sitebalancespecies"]]     
      
     # Get pressure damp 
     try :      
@@ -103,17 +103,18 @@ def fint(conf,int,ltp):
         pdamp1=""
         pdamp2=""
         
-    ltp['prs']=""
+    ltp['prs']=[]
       
     # Process intermediates, starting by adsorbed (cat), then gas. 
-    for item in sorted(int) :  
-   #for key,value in sorted(int).items() : #key~item ; value~int[item] (all line)             
-   #so the input of the sub-function will be the key and value
-        if  int[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] :      
+    for item in sorted(itm) :  
+    # SERGIO: 
+    # for key,value in sorted(itm).items() : #key~item ; value~itM[item] (all line)             
+    # so the input of the sub-function will be the key and value
+        if  itm[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] :      
             # A surface species 
                
             # Initialize diff equations to count in which reactions each species participate.     
-            int[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
+            itm[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
             #value['diff']="eqd"+key+":=diff(c"+key+"(t),t)="
              
             # Prepare site balance  
@@ -132,20 +133,22 @@ def fint(conf,int,ltp):
             #print(rhsparse)  
              
             # List of reactions for fprintf function in Maple 
-            ltp['int']+="sc"+item+", " 
+            #ltp['itm']+="sc"+item+", " 
+            ltp['itm'].append("sc"+item)
               
             # Initialize list of reactions in which each intermediate participate. 
             # Deprecated: No longer needed.              
-            #int[item]['rxnlst']=[] 
+            #itm[item]['rxnlst']=[] 
                  
-        elif int[item]['phase']=='gas' : 
+        elif itm[item]['phase']=='gas' : 
             # Get partial pressures 
             try : 
-                int[item]['pressure']=conf['Pressures'][item] 
+                itm[item]['pressure']=conf['Pressures'][item] 
             except : 
-                int[item]['pressure']=0 
+                itm[item]['pressure']=0 
             # Generate list of pressures
-            ltp['prs']+="P"+item+", "
+            #ltp['prs']+="P"+item+", "
+            ltp['prs'].append("P"+item)
               
         elif item!=conf["Reactor"]["sitebalancespecies"] : 
             print("Unknown phase for ",item," \n I only recognize 'cat' and 'gas'") 
@@ -161,26 +164,26 @@ def fint(conf,int,ltp):
     initialc=initialc[:-1]+" : "
       
     #print("\n",sbalance,"\n",initialc,"\n",sodesolv) 
-    return(int,sbalance,sodesolv,initialc,rhsparse) 
+    return(itm,sbalance,sodesolv,initialc,rhsparse) 
      
      
-def frxn(conf,int,rxn,ltp):
+def frxn(conf,itm,rxn,ltp):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
-    It also expands the list of differential equations in "int"
+    It also expands the list of differential equations in "itm"
     and the list of reactions in which each intermediate participates. 
     
     Args: 
         conf: Configuration data.
         rxn: Dict of dicts containing the reactions. (Mutable)
-        int: Dict of dicts containing at least a list of intermediates as index. (Mutable)
+        itm: Dict of dicts containing at least a list of intermediates as index. (Mutable)
     
     Returns: 
         rxn: Expanded dict of dicts containing adsorption/desorption constants and rates. (Mutable)
-        int: Expanded dict of dicts with list of differential equations updated with chemical reactions. (Mutable)
+        itm: Expanded dict of dicts with list of differential equations updated with chemical reactions. (Mutable)
     """ 
         
-    ltp['rxn']=""  
+    ltp['rxn']=[]  
      
     for item in sorted(rxn) : 
         # Initialize variables 
@@ -207,21 +210,21 @@ def frxn(conf,int,rxn,ltp):
             Gdi1=0.0
         else:   
             try:       
-                Gdi1=int[rxn[item]['is1']]['G']
+                Gdi1=itm[rxn[item]['is1']]['G']
             except:                 
                 print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," whose energy was not found.")
                 exit() 
-            if   int[rxn[item]['is1']]['phase']=='cat':  
+            if   itm[rxn[item]['is1']]['phase']=='cat':  
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
                 if rxn[item]['is1']!=conf["Reactor"]["sitebalancespecies"] : 
-                    int[rxn[item]['is1']]['diff']+="-r"+item+"(t)"
-            elif int[rxn[item]['is1']]['phase']=='gas':
+                    itm[rxn[item]['is1']]['diff']+="-r"+item+"(t)"
+            elif itm[rxn[item]['is1']]['phase']=='gas':
                 howmanygasd+=1
                 rxn[item]['kd']+="101325*P"+rxn[item]['is1']+\
                               "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(int[rxn[item]['is1']]['mw'])+"*10^(-27)))" 
+                              "{:.2f}".format(itm[rxn[item]['is1']]['mw'])+"*10^(-27)))" 
                 rxn[item]['rtd']=rxn[item]['rtd']+"*P"+rxn[item]['is1']
                 rxn[item]['srtd']=rxn[item]['srtd']+"*P"+rxn[item]['is1'] 
                             
@@ -229,21 +232,21 @@ def frxn(conf,int,rxn,ltp):
             Gdi2=0.0
         else:        
             try:
-                Gdi2=int[rxn[item]['is2']]['G']
+                Gdi2=itm[rxn[item]['is2']]['G']
             except: 
                 print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," whose energy was not found.")
                 exit()
-            if   int[rxn[item]['is2']]['phase']=='cat':  
+            if   itm[rxn[item]['is2']]['phase']=='cat':  
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
                 if rxn[item]['is2']!=conf["Reactor"]["sitebalancespecies"] : 
                     int[rxn[item]['is2']]['diff']+="-r"+item+"(t)"
-            elif int[rxn[item]['is2']]['phase']=='gas':
+            elif itm[rxn[item]['is2']]['phase']=='gas':
                 howmanygasd+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['is2']+\
                               "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(int[rxn[item]['is2']]['mw'])+"*10^(-27)))" 
+                              "{:.2f}".format(itm[rxn[item]['is2']]['mw'])+"*10^(-27)))" 
                 rxn[item]['rtd']=rxn[item]['rtd']+"*P"+rxn[item]['is2']
                 rxn[item]['srtd']=rxn[item]['srtd']+"*P"+rxn[item]['is2']
              
@@ -251,21 +254,21 @@ def frxn(conf,int,rxn,ltp):
             Gdif=0.0
         else:
             try: 
-                Gdf1=int[rxn[item]['fs1']]['G']
+                Gdf1=itm[rxn[item]['fs1']]['G']
             except: 
                 print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," whose energy was not found.")
                 exit() 
-            if   int[rxn[item]['fs1']]['phase']=='cat': 
+            if   itm[rxn[item]['fs1']]['phase']=='cat': 
                 rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
                 rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
                 if rxn[item]['fs1']!=conf["Reactor"]["sitebalancespecies"] : 
-                    int[rxn[item]['fs1']]['diff']+="+r"+item+"(t)"
-            elif int[rxn[item]['fs1']]['phase']=='gas': 
+                    itm[rxn[item]['fs1']]['diff']+="+r"+item+"(t)"
+            elif itm[rxn[item]['fs1']]['phase']=='gas': 
                 howmanygasi+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['fs1']+\
                               "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(int[rxn[item]['fs1']]['mw'])+"*10^(-27)))" 
+                              "{:.2f}".format(itm[rxn[item]['fs1']]['mw'])+"*10^(-27)))" 
                 rxn[item]['rti']=rxn[item]['rti']+"*P"+rxn[item]['fs1']
                 rxn[item]['srti']=rxn[item]['srti']+"*P"+rxn[item]['fs1'] 
              
@@ -273,21 +276,21 @@ def frxn(conf,int,rxn,ltp):
             Gdf2=0.0
         else:        
             try: 
-                Gdf2=int[rxn[item]['fs2']]['G']
+                Gdf2=itm[rxn[item]['fs2']]['G']
             except: 
                 print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," whose energy was not found.")
                 exit() 
-            if   int[rxn[item]['fs2']]['phase']=='cat':
+            if   itm[rxn[item]['fs2']]['phase']=='cat':
                 rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
                 rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
                 if rxn[item]['fs2']!=conf["Reactor"]["sitebalancespecies"] : 
-                    int[rxn[item]['fs2']]['diff']+="+r"+item+"(t)"
-            elif int[rxn[item]['fs2']]['phase']=='gas':
+                    itm[rxn[item]['fs2']]['diff']+="+r"+item+"(t)"
+            elif itm[rxn[item]['fs2']]['phase']=='gas':
                 howmanygasi+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['fs2']+\
                               "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(int[rxn[item]['fs2']]['mw'])+"*10^(-27)))" 
+                              "{:.2f}".format(itm[rxn[item]['fs2']]['mw'])+"*10^(-27)))" 
                 rxn[item]['rti']=rxn[item]['rti']+"*P"+rxn[item]['fs2']
                 rxn[item]['srti']=rxn[item]['srti']+"*P"+rxn[item]['fs2']             
              
@@ -336,18 +339,19 @@ def frxn(conf,int,rxn,ltp):
             exit()           
         
         # List of reactions for fprintf function in Maple 
-        ltp['rxn']+="sr"+item+", "
+        #ltp['rxn']+="sr"+item+", "
+        ltp['rxn'].append("sr"+item)
          
-    return(rxn,int)
+    return(rxn,itm)
      
-def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
+def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
     # Before called printtxtsr
     """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
       
     Args: 
         conf: Configuration data. 
-            time1: Time or times for which the concentrations and reactions shall be printed (str/int/float, or list).
-        int: Dict of dicts listing the intermediates by an index. (Mutable)
+            time1: Tiime or times for which the concentrations and reactions shall be printed (str/int/float, or list).
+        itm: Dict of dicts listing the intermediates by an index. (Mutable)
         rxn: Dict of dicts for reactions. (Mutable)
         sbalance: Site-balance equetion, string. 
         initialc: Initial conditions, string. 
@@ -359,36 +363,43 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     #print("restart: " )
      
     print("T:=", conf.get("Reactor","reactortemp"), " : " )
-    for item in sorted(int) : 
-        if int[item]['phase']=='gas' :  
-            print('P'+item+":=",int[item]['pressure']," : ") 
-    
+    for item in sorted(itm) : 
+        if itm[item]['phase']=='gas' :  
+            print('P'+item+":=",itm[item]['pressure']," : ") 
+      
     print("\n# Kinetic constants")
     #for item in sorted(gas) :
     #    print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['kd'],  rxn[item]['ki']  )
-    
+      
     print("\n# Reaction rates:")
     #for item in sorted(gas) :
     #    print(gas[item]['rads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['rtd'],rxn[item]['rti'])
-    
+      
     print("\n# Site-balance equation: ")
     print(sbalance)
-    
+     
     print("\n# Differential equations: ")
-    for item in sorted(int) :
-        if  int[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] : 
-            print(int[item]['diff']," : ")
-    
+    for item in sorted(itm) :
+        if  itm[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] : 
+            print(itm[item]['diff']," : ")
+      
     print("\n# Initial conditions: ")
     print(initialc)
-    
+      
     print("\n# SODE Solver: ")
     print(sodesolv)
-      
+       
+    # Print labels, before the timeloop. 
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",','catalyst, "timei", "T",', 
+          ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
+          ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
+          ', '.join(['"'+item+'"' for item in ltp['rxn']]) ,   
+          " ): \n " )  
+       
     # Time control: 
     time1,timel=rxntime(conf)
     if timel : 
@@ -411,18 +422,18 @@ def printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     #    print(gas[item]['srads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
-     
-    # Print labels
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",','catalyst,"T","', [item for item in ltp['prs'] ] ,'",timei,'    )
-     
+                   
     # Print results 
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['General']['catalyst'],',T,',ltp['prs'],"timei,",ltp['int'],ltp['rxn'][:-2]," ): ")
-    # REMOVE ME:  
-    print(ltp['prs']) 
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['General']['catalyst'],', timei, T,',
+          ', '.join([item for item in ltp['prs']]) ,",", 
+          ', '.join([item for item in ltp['itm']]) ,",", 
+          ', '.join([item for item in ltp['rxn']]) , 
+          " ): " )  
      
     if timel :     
         print("\nod: \n ") 
-      
-    print()
+    
+    # Print close file instruction  
+    print('\nclose(',conf['General']['mapleoutput'],'): ')
      
     

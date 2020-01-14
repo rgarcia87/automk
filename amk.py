@@ -16,7 +16,7 @@ Possible expansions:
 import amklib       
 
 # Initialize variables
-ltp={}                    # List to print dictionary
+ltp={}                    # List-to-print dictionary of lists
 
 # Read configuration file 
 conf=amklib.readconf("./parameters.txt") 
