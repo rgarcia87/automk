@@ -22,24 +22,23 @@ ltp={}                    # List-to-print dictionary of lists
 conf=amklib.readconf("./parameters.txt") 
 
 # Read the input files int&rxn as dictionary of dictionaries. 
-int=amklib.read('./int.csv')
+itm=amklib.read('./itm.csv')
 rxn=amklib.read('./rxn.csv')
 #print('\n \n', int, '\n \n' , rxn, '\n \n')
 
 # Prepare site balance equation, solver for SODE, and initial conditions. 
 # Also initialize the list of differential equations.
-int,sbalance,sodesolv,initialc,rhsparse=amklib.fint(conf,int,ltp)
+itm,sbalance,sodesolv,initialc,rhsparse=amklib.fint(conf,itm,ltp)
 
 # Prepare kinetic constants and rates of adsorption/desorption.
-# Also expand list of differential equations in "int" to include adsorption/desorptions. 
+# Also expand list of differential equations in "itm" to include adsorption/desorptions. 
 #int=amklib.fgas(conf,int,ltp) 
 
 # Prepare kinetic constants and rates of all chemical steps. 
-# Also expand list of differential equations in "int" to include chemical steps. 
-rxn,int=amklib.frxn(conf,int,rxn,ltp)
+# Also expand list of differential equations in "itm" to include chemical steps. 
+rxn,itm=amklib.frxn(conf,itm,rxn,ltp)
 
 # Print Maple input. 
-amklib.printtxt(conf,int,rxn,sbalance,initialc,sodesolv,rhsparse,ltp)
+amklib.printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp)
 
-#amklib.rxntime(conf)
 
