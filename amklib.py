@@ -241,8 +241,7 @@ def frxn(conf,itm,rxn,ltp):
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
                 if rxn[item]['is2']!=conf["Reactor"]["sitebalancespecies"] : 
-                    print(item,rxn[item]['is2'])
-                    int[rxn[item]['is2']]['diff']+="-r"+item+"(t)"
+                    itm[rxn[item]['is2']]['diff']+="-r"+item+"(t)"
             elif itm[rxn[item]['is2']]['phase']=='gas':
                 howmanygasd+=1 
                 rxn[item]['kd']+="101325*P"+rxn[item]['is2']+\

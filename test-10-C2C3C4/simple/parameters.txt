@@ -1,0 +1,15 @@
+[General]                         
+  mapleoutput="debug-09-1.xls"  # Output files
+  catalyst="Cu100"              # 
+                                 
+[Reactor]                        
+  reactortype="Differential"      
+  reactortemp=373               # Temperature in Kelvin
+  time1=[ 1E-9, 1E-6, 1E0, 1E3, 1E6 ]  # Reaction times   
+# time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
+  pressuredamptime=1            # Pressure damping time in seconds, >1E-13 s. Otherwise no damping.    
+  sitebalancespecies=i000000    # Species that will center the site balance. 
+                                 
+[Pressures]                       
+  g020101=40                    # In atmospheres. Remaining species treated as zero.  
+  g102101=10           
