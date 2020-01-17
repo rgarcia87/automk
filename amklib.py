@@ -221,6 +221,7 @@ def frxn(conf,itm,rxn,ltp):
                     itm[rxn[item]['is1']]['diff']+="-r"+item+"(t)"
             elif itm[rxn[item]['is1']]['phase']=='gas':
                 howmanygasd+=1
+                #print(item,rxn[item]['is1'],itm[rxn[item]['is1']]['mw'],type(itm[rxn[item]['is1']]['mw']))
                 rxn[item]['kd']+="101325*P"+rxn[item]['is1']+\
                               "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
                               "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
@@ -240,6 +241,7 @@ def frxn(conf,itm,rxn,ltp):
                 rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
                 rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
                 if rxn[item]['is2']!=conf["Reactor"]["sitebalancespecies"] : 
+                    print(item,rxn[item]['is2'])
                     int[rxn[item]['is2']]['diff']+="-r"+item+"(t)"
             elif itm[rxn[item]['is2']]['phase']=='gas':
                 howmanygasd+=1 
