@@ -1,5 +1,5 @@
 [General]                         
-  mapleoutput="debug-04-1.xls"  # Output files
+  mapleoutput="debug-10-6.xls"  # Output files
   catalyst="Cu100"              # 
                                  
 [Reactor]                        

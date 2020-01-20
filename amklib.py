@@ -156,7 +156,7 @@ def process_intermediates(conf,itm,ltp):
             exit()
                                             
     # Close the site-balance equation     
-    sbalance=sbalance+":" 
+    sbalance=sbalance+" : " 
      
     # Close the sodesolv
     sodesolv=sodesolv+"IC0}, numeric, method=rosenbrock, maxfun=0, abserr=1E-16, interr=false);"
@@ -223,7 +223,7 @@ def kinetic_constants(conf,itm,rxn,item) :
                         "{:.6f}".format( rxn[item]['aGd'])+","+\
                         "{:.6f}".format( rxn[item]['dGd'])+\
                         ")/("+kbev+"*T)))"+\
-                        "/sqrt(2*Pi*1.6605390400E-27*"+mw+"*1.3806485200-23*T )) : "
+                        "/sqrt(2*Pi*1.6605390400E-27*"+mw+"*1.3806485200E-23*T )) : "
                         # Denominator: sqrt(2Pi(elemmass@kg)*massweight*kB(SI)*T
     else :
         print("WARNING! direct reaction #",item,"has",howmanygasd,"gas/aq reactants.")
@@ -239,10 +239,10 @@ def kinetic_constants(conf,itm,rxn,item) :
         mw="{:.6f}".format(mw_gas(itm,rxn,item,'fs1')+mw_gas(itm,rxn,item,'fs2')) 
         rxn[item]['ki']="k"+item+"i:=evalf((101325*"+area+"*1E-20"+\
                         "*exp(-max(0.0,"+\
-                        "{:.6f}".format( rxn[item]['aGd'])+","+\
-                        "{:.6f}".format( rxn[item]['dGd'])+\
+                        "{:.6f}".format( rxn[item]['aGi'])+","+\
+                        "{:.6f}".format(-rxn[item]['dGd'])+\
                         ")/("+kbev+"*T)))"+\
-                        "/sqrt(2*Pi*1.6605390400E-27*"+mw+"*1.3806485200-23*T )) : "
+                        "/sqrt(2*Pi*1.6605390400E-27*"+mw+"*1.3806485200E-23*T )) : "
     else :
         print("WARNING! reverse reaction #",item,"has",howmanygasd,"gas/aq reactants.")
         print("Abnormal termination")
@@ -258,9 +258,11 @@ def process_itm_on_rxn(conf,itm,rxn,item,state='is1'):
         and its pressure as variable in the reaction rate.
     """ 
     if   state=='is1' or state=='is2' : 
-        semirxn='d' 
+        semirxn='d'
+        sign='-' # Consume reactants 
     elif state=='fs1' or state=='fs2' : 
         semirxn='i'
+        sign='+' # Increase products 
     else : 
         print("Wrong state for reaction", item, "\nOnly 'is1', 'is2', 'fs1', and 'fs2' supported") 
         exit()
@@ -284,7 +286,7 @@ def process_itm_on_rxn(conf,itm,rxn,item,state='is1'):
             rxn[item]['srt'+semirxn]+="*sc"+rxn[item][state]
             # Exclude the central species from site-balance equation from differential equations
             if rxn[item][state]!=conf["Reactor"]["sitebalancespecies"] :
-                itm[rxn[item][state]]['diff']+="-r"+item+"(t)"
+                itm[rxn[item][state]]['diff']+=sign+"r"+item+"(t)"
         # If (initial/final) state "i" is "gas" (or aqueous) use p instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='gas':
@@ -316,8 +318,6 @@ def process_rxn(conf,itm,rxn,ltp):
         rxn[item]['dGd']=""
         rxn[item]['aGd']=""
         rxn[item]['aGi']=""
-#        rxn[item]['kd']="k"+item+"d:=evalf("   
-#        rxn[item]['ki']="k"+item+"i:=evalf("    
         rxn[item]['rtd']="r"+item+":=(t)-> k"+item+"d"
         rxn[item]['rti']="-k"+item+"i"
         rxn[item]['srtd']="sr"+item+":= k"+item+"d" 
