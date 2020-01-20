@@ -28,15 +28,11 @@ rxn=amklib.read('./rxn.csv')
 
 # Prepare site balance equation, solver for SODE, and initial conditions. 
 # Also initialize the list of differential equations.
-itm,sbalance,sodesolv,initialc,rhsparse=amklib.fint(conf,itm,ltp)
-
-# Prepare kinetic constants and rates of adsorption/desorption.
-# Also expand list of differential equations in "itm" to include adsorption/desorptions. 
-#int=amklib.fgas(conf,int,ltp) 
+itm,sbalance,sodesolv,initialc,rhsparse=amklib.process_intermediates(conf,itm,ltp)
 
 # Prepare kinetic constants and rates of all chemical steps. 
 # Also expand list of differential equations in "itm" to include chemical steps. 
-rxn,itm=amklib.frxn(conf,itm,rxn,ltp)
+rxn,itm=amklib.process_rxn(conf,itm,rxn,ltp)
 
 # Print Maple input. 
 amklib.printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp)

@@ -20,7 +20,7 @@ def readconf(filename='./parameters.txt'):
     
     conf=configparser.ConfigParser(inline_comment_prefixes=('#'))
     conf.read(filename)
-    return conf 
+    return(conf)  
     
 def rxntime(conf) : 
     """Subroutine that interpretes the time.   
@@ -64,7 +64,8 @@ def read(filename='./int.csv'):
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='label').T.to_dict()
     return(dic) 
      
-def fint(conf,itm,ltp):
+     
+def process_intermediates(conf,itm,ltp):
     """This function process the "intermediates" dataframe to generate 
     the site-balance equation, the SODE-solver, and the initial conditions as clean surface. 
     It also initializes the list of differential equations.  
@@ -167,7 +168,112 @@ def fint(conf,itm,ltp):
     return(itm,sbalance,sodesolv,initialc,rhsparse) 
      
      
-def frxn(conf,itm,rxn,ltp):
+def is_gas(rxn,itm,item,state): 
+    """ Returns 1 if a given (initial/final) state of rxn #item is gas.
+    Returns 0 otherwise.  """
+    #print(item,state,rxn[item][state],itm['gP']['phase']) 
+    if   rxn[item][state]=='None' or rxn[item][state]==None :
+        gas=0 
+    else : 
+        if itm[rxn[item][state]]['phase']=='gas' :
+            gas=1 
+        elif itm[rxn[item][state]]['phase']=='cat' :
+            gas=0
+        else : 
+            print("Phase of rxn#",item," intermediate ",rxn[item][state],":",
+                  itm[rxn[item][state]]['phase'],"Not recognized" ) 
+    return(gas)  
+     
+     
+def kinetic_constants(conf,itm,rxn,item) : 
+    """ Prepares the kinetic constants for direct and (i)reverse semireactions 
+    depending on the number of gas-phase intermediates. 
+    Returns error if there are more than two species in gas for a given semirxn. 
+    """ 
+    # Kinetic constant for each reaction.         
+    # If there are no species in gas-phase, multiply by kB*T/h. 
+    # In any case, multiply by exp(-Ga/kB*T) (Arrhenius Eq, or sticking coefficient).  
+    # Not yet implemented: reactions at interface and diffusions. 
+    howmanygasd=is_gas(rxn,itm,item,'is1')+is_gas(rxn,itm,item,'is2')
+    howmanygasi=is_gas(rxn,itm,item,'fs1')+is_gas(rxn,itm,item,'fs2')
+    area=conf['Reactor']['areaactivesite']
+    
+    if   howmanygasd==0 :
+        rxn[item]['kd']+=kbh+"*T*exp(-max(0.0,"+\
+                        "{:.6f}".format( rxn[item]['aGd'])+","+\
+                        "{:.6f}".format( rxn[item]['dGd'])+\
+                        ")/("+kbev+"*T)) ): "
+    elif howmanygasd==1 :
+        rxn[item]['kd']+="exp(-max(0.0,"+\
+                        "{:.6f}".format( rxn[item]['aGd'])+","+\
+                        "{:.6f}".format( rxn[item]['dGd'])+\
+                        ")/("+kbev+"*T)) ): "
+    else :
+        print("WARNING! direct reaction #",item,"has",howmanygasd,"gas/aq reactants.")
+        print("Abnormal termination")
+        exit()
+     
+    if   howmanygasi==0 :
+        rxn[item]['ki']+=kbh+"*T*exp(-max(0.0,"+\
+                        "{:.6f}".format( rxn[item]['aGi'])+","+\
+                        "{:.6f}".format(-rxn[item]['dGd'])+\
+                        ")/("+kbev+"*T)) ): "
+    elif howmanygasi==1 :
+        rxn[item]['ki']+="*exp(-max(0.0,"+\
+                        "{:.6f}".format( rxn[item]['aGi'])+","+\
+                        "{:.6f}".format(-rxn[item]['dGd'])+\
+                        ")/("+kbev+"*T)) ): "
+    else :
+        print("WARNING! reverse reaction #",item,"has",howmanygasd,"gas/aq reactants.")
+        print("Abnormal termination")
+        exit()
+     
+     
+def process_itm_on_rxn(conf,itm,rxn,item,state='is1'): 
+    """ Use the is/fs states for each reaction to get their activation energies. 
+    Then write the formula for reaction rate according to their intermediates. 
+        This formula is split between rtd (direct part) and rti (inverse part). 
+    Then update the differential equations in which each adsorbed species participates. 
+    If a rectant is in gas phase, include a Hertz-Knudsen term in the constant 
+        and its pressure as variable in the reaction rate.
+    """ 
+    if   state=='is1' or state=='is2' : 
+        semirxn='d' 
+    elif state=='fs1' or state=='fs2' : 
+        semirxn='i'
+    else : 
+        print("Wrong state for reaction", item, "\nOnly 'is1', 'is2', 'fs1', and 'fs2' supported") 
+        exit()
+         
+    # Get energy of the (initial/final) state "i" 
+    if rxn[item][state]=='None' or rxn[item][state]==None :
+        G=0.0
+    else:
+        try:
+            G=itm[rxn[item][state]]['G']
+        except:
+            print("\n Error!, reaction ",item, " comes from ",state, rxn[item][state],
+                  " whose energy was not found.")
+            exit()
+        # If (initial/final) state "i" is on catalyst, include concentration in rxn equation
+        # and add rxn to respective differential equation. 
+        if  itm[rxn[item][state]]['phase']=='cat':
+            #rxn[item]['rt'+semirxn]=rxn[item]['rt'+semirxn]+"*c"+rxn[item][state]+"(t)"
+            #rxn[item]['srt'+semirxn]=rxn[item]['srt'+semirxn]+"*sc"+rxn[item][state]
+            rxn[item]['rt'+semirxn]+="*c"+rxn[item][state]+"(t)"
+            rxn[item]['srt'+semirxn]+="*sc"+rxn[item][state]
+            # Exclude the central species from site-balance equation from differential equations
+            if rxn[item][state]!=conf["Reactor"]["sitebalancespecies"] :
+                itm[rxn[item][state]]['diff']+="-r"+item+"(t)"
+        # If (initial/final) state "i" is "gas" (or aqueous) use p instead of c(t) 
+        # and do not generate any differential equation.  
+        elif itm[rxn[item][state]]['phase']=='gas':
+            rxn[item]['rt'+semirxn]+="*P"+rxn[item][state]
+            rxn[item]['srt'+semirxn]+="*P"+rxn[item][state]
+    return(G) 
+     
+     
+def process_rxn(conf,itm,rxn,ltp):
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
     It also expands the list of differential equations in "itm"
@@ -187,10 +293,9 @@ def frxn(conf,itm,rxn,ltp):
      
     for item in sorted(rxn) : 
         # Initialize variables 
+        rxn[item]['dGd']=""
         rxn[item]['aGd']=""
         rxn[item]['aGi']=""
-        rxn[item]['kd']=""
-        rxn[item]['ki']=""
         rxn[item]['kd']="k"+item+"d:=evalf("   
         rxn[item]['ki']="k"+item+"i:=evalf("    
         rxn[item]['rtd']="r"+item+":=(t)-> k"+item+"d"
@@ -206,145 +311,28 @@ def frxn(conf,itm,rxn,ltp):
         # Then update the differential equations in which each adsorbed species participates. 
         # If a rectant is in gas phase, include a Hertz-Knudsen term in the constant 
         #     and its pressure as variable in the reaction rate.      
-        if rxn[item]['is1']=='None' :
-            Gdi1=0.0
-        else:   
-            try:       
-                Gdi1=itm[rxn[item]['is1']]['G']
-            except:                 
-                print("\n Error!, reaction ",item, " comes from IS1 ",rxn[item]['is1']," whose energy was not found.")
-                exit() 
-            if   itm[rxn[item]['is1']]['phase']=='cat':  
-                rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is1']+"(t)"
-                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is1'] 
-                if rxn[item]['is1']!=conf["Reactor"]["sitebalancespecies"] : 
-                    itm[rxn[item]['is1']]['diff']+="-r"+item+"(t)"
-            elif itm[rxn[item]['is1']]['phase']=='gas':
-                howmanygasd+=1
-                #print(item,rxn[item]['is1'],itm[rxn[item]['is1']]['mw'],type(itm[rxn[item]['is1']]['mw']))
-                rxn[item]['kd']+="101325*P"+rxn[item]['is1']+\
-                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
-                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(itm[rxn[item]['is1']]['mw'])+"*10^(-27)))" 
-                rxn[item]['rtd']=rxn[item]['rtd']+"*P"+rxn[item]['is1']
-                rxn[item]['srtd']=rxn[item]['srtd']+"*P"+rxn[item]['is1'] 
-                            
-        if rxn[item]['is2']=='None' :
-            Gdi2=0.0
-        else:        
-            try:
-                Gdi2=itm[rxn[item]['is2']]['G']
-            except: 
-                print("\n Error!, reaction ",item, " comes from IS2 ",rxn[item]['is2']," whose energy was not found.")
-                exit()
-            if   itm[rxn[item]['is2']]['phase']=='cat':  
-                rxn[item]['rtd']=rxn[item]['rtd']+"*c"+rxn[item]['is2']+"(t)"
-                rxn[item]['srtd']=rxn[item]['srtd']+"*sc"+rxn[item]['is2']
-                if rxn[item]['is2']!=conf["Reactor"]["sitebalancespecies"] : 
-                    itm[rxn[item]['is2']]['diff']+="-r"+item+"(t)"
-            elif itm[rxn[item]['is2']]['phase']=='gas':
-                howmanygasd+=1 
-                rxn[item]['kd']+="101325*P"+rxn[item]['is2']+\
-                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
-                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(itm[rxn[item]['is2']]['mw'])+"*10^(-27)))" 
-                rxn[item]['rtd']=rxn[item]['rtd']+"*P"+rxn[item]['is2']
-                rxn[item]['srtd']=rxn[item]['srtd']+"*P"+rxn[item]['is2']
-             
-        if rxn[item]['fs1']=='None' :
-            Gdif=0.0
-        else:
-            try: 
-                Gdf1=itm[rxn[item]['fs1']]['G']
-            except: 
-                print("\n Error!, reaction ",item, " goes to FS1 ",rxn[item]['fs1']," whose energy was not found.")
-                exit() 
-            if   itm[rxn[item]['fs1']]['phase']=='cat': 
-                rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs1']+"(t)"
-                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs1'] 
-                if rxn[item]['fs1']!=conf["Reactor"]["sitebalancespecies"] : 
-                    itm[rxn[item]['fs1']]['diff']+="+r"+item+"(t)"
-            elif itm[rxn[item]['fs1']]['phase']=='gas': 
-                howmanygasi+=1 
-                rxn[item]['kd']+="101325*P"+rxn[item]['fs1']+\
-                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
-                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(itm[rxn[item]['fs1']]['mw'])+"*10^(-27)))" 
-                rxn[item]['rti']=rxn[item]['rti']+"*P"+rxn[item]['fs1']
-                rxn[item]['srti']=rxn[item]['srti']+"*P"+rxn[item]['fs1'] 
-             
-        if rxn[item]['fs2']=='None' :
-            Gdf2=0.0
-        else:        
-            try: 
-                Gdf2=itm[rxn[item]['fs2']]['G']
-            except: 
-                print("\n Error!, reaction ",item, " goes to FS2 ",rxn[item]['fs2']," whose energy was not found.")
-                exit() 
-            if   itm[rxn[item]['fs2']]['phase']=='cat':
-                rxn[item]['rti']=rxn[item]['rti']+"*c"+rxn[item]['fs2']+"(t)"
-                rxn[item]['srti']=rxn[item]['srti']+"*sc"+rxn[item]['fs2'] 
-                if rxn[item]['fs2']!=conf["Reactor"]["sitebalancespecies"] : 
-                    itm[rxn[item]['fs2']]['diff']+="+r"+item+"(t)"
-            elif itm[rxn[item]['fs2']]['phase']=='gas':
-                howmanygasi+=1 
-                rxn[item]['kd']+="101325*P"+rxn[item]['fs2']+\
-                              "/(1.7492150414*10^19*sqrt(1.6605390400*"+\
-                              "(2*evalf(Pi)*1.3806485200)*10^(-23)*T*"+\
-                              "{:.2f}".format(itm[rxn[item]['fs2']]['mw'])+"*10^(-27)))" 
-                rxn[item]['rti']=rxn[item]['rti']+"*P"+rxn[item]['fs2']
-                rxn[item]['srti']=rxn[item]['srti']+"*P"+rxn[item]['fs2']             
-             
-        # Close the formula with ":"
-        rxn[item]['rti']=rxn[item]['rti']+" : "
-          
+        Gi1=process_itm_on_rxn(conf,itm,rxn,item,'is1')  
+        Gi2=process_itm_on_rxn(conf,itm,rxn,item,'is2')  
+        Gf1=process_itm_on_rxn(conf,itm,rxn,item,'fs1')  
+        Gf2=process_itm_on_rxn(conf,itm,rxn,item,'fs2')  
+         
         # Get reaction (dG) and (aG) activation energies for each reaction, both direct and inverse.  
         #print("\n",Gdi1,Gdi2,Gdf1,Gdf2)    
-        rxn[item]['dGd']=Gdf1+Gdf2     -Gdi1-Gdi2    
-        rxn[item]['aGd']=rxn[item]['G']-Gdi1-Gdi2
-        rxn[item]['aGi']=rxn[item]['G']-Gdf1-Gdf2
-        #print('\n \n' , rxn, '\n \n')    
-                
-        # Kinetic constant for each reaction.         
-        # If there are no species in gas-phase, multiply by kB*T/h. 
-        # In any case, multiply by exp(-Ga/kB*T) (Arrhenius Eq, or sticking coefficient).  
-        # Not yet implemented: reactions at interface and diffusions. 
-        if   howmanygasd==0 :   
-            rxn[item]['kd']+=kbh+"*T*exp(-max(0.0,"+\
-                            "{:.6f}".format( rxn[item]['aGd'])+","+\
-                            "{:.6f}".format( rxn[item]['dGd'])+\
-                            ")/("+kbev+"*T)) ): "      
-        elif howmanygasd==1 :
-            rxn[item]['kd']+="*exp(-max(0.0,"+\
-                            "{:.6f}".format( rxn[item]['aGd'])+","+\
-                            "{:.6f}".format( rxn[item]['dGd'])+\
-                            ")/("+kbev+"*T)) ): "   
-        else : 
-            print("WARNING! direct reaction #",item,"has",howmanygasd,"gas/aq reactants.") 
-            print("Abnormal termination") 
-            exit()    
+        rxn[item]['dGd']=Gf1+Gf2       -Gi1-Gi2 
+        rxn[item]['aGd']=rxn[item]['G']-Gi1-Gi2 
+        rxn[item]['aGi']=rxn[item]['G']-Gf1-Gf2 
+             
+        # Close the reaction formula with ":"
+        rxn[item]['rti']=rxn[item]['rti']+" : "
           
-        if   howmanygasi==0 :   
-            rxn[item]['ki']+=kbh+"*T*exp(-max(0.0,"+\
-                            "{:.6f}".format( rxn[item]['aGi'])+","+\
-                            "{:.6f}".format(-rxn[item]['dGd'])+\
-                            ")/("+kbev+"*T)) ): "             
-        elif howmanygasi==1 :
-            rxn[item]['ki']+="*exp(-max(0.0,"+\
-                            "{:.6f}".format( rxn[item]['aGi'])+","+\
-                            "{:.6f}".format(-rxn[item]['dGd'])+\
-                            ")/("+kbev+"*T)) ): "   
-        else : 
-            print("WARNING! reverse reaction #",item,"has",howmanygasd,"gas/aq reactants.") 
-            print("Abnormal termination") 
-            exit()           
-        
+        # Get kinetic constants 
+        kinetic_constants(conf,itm,rxn,item)        
+           
         # List of reactions for fprintf function in Maple 
-        #ltp['rxn']+="sr"+item+", "
         ltp['rxn'].append("sr"+item)
-         
+           
     return(rxn,itm)
-     
+        
 def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
     # Before called printtxtsr
     """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
@@ -372,7 +360,7 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     #for item in sorted(gas) :
     #    print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
     for item in sorted(rxn) :
-        print(rxn[item]['kd'],  rxn[item]['ki']  )
+        print(rxn[item]['kd'],"\n",rxn[item]['ki']  )
       
     print("\n# Reaction rates:")
     #for item in sorted(gas) :
@@ -394,13 +382,14 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     print("\n# SODE Solver: ")
     print(sodesolv)
        
-    # Print labels, before the timeloop. 
+    # Print labels, before the timeloop and flush. 
     print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",','catalyst, "timei", "T",', 
           ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
           ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
           ', '.join(['"'+item+'"' for item in ltp['rxn']]) ,   
           " ): \n " )  
-       
+    print('\nflush(',conf['General']['mapleoutput'],'): ')
+         
     # Time control: 
     time1,timel=rxntime(conf)
     if timel : 
@@ -430,11 +419,13 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
           ', '.join([item for item in ltp['itm']]) ,",", 
           ', '.join([item for item in ltp['rxn']]) , 
           " ): " )  
+       
+    print('\nflush(',conf['General']['mapleoutput'],'): ')
      
     if timel :     
         print("\nod: \n ") 
     
     # Print close file instruction  
-    print('\nclose(',conf['General']['mapleoutput'],'): ')
+    print('\nclose(',conf['General']['mapleoutput'],'): \n\n')
      
     
