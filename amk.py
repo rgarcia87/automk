@@ -32,7 +32,7 @@ itm,sbalance,sodesolv,initialc,rhsparse=amklib.process_intermediates(conf,itm,lt
 
 # Prepare kinetic constants and rates of all chemical steps. 
 # Also expand list of differential equations in "itm" to include chemical steps. 
-rxn,itm=amklib.process_rxn(conf,itm,rxn,ltp)
+itm,rxn=amklib.process_rxn(conf,itm,rxn,ltp)
 
 # Print Maple input. 
 amklib.printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp)

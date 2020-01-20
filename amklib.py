@@ -168,7 +168,7 @@ def process_intermediates(conf,itm,ltp):
     return(itm,sbalance,sodesolv,initialc,rhsparse) 
      
      
-def is_gas(rxn,itm,item,state): 
+def is_gas(itm,rxn,item,state): 
     """ Returns 1 if a given (initial/final) state of rxn #item is gas.
     Returns 0 otherwise.  """
     #print(item,state,rxn[item][state],itm['gP']['phase']) 
@@ -183,46 +183,66 @@ def is_gas(rxn,itm,item,state):
             print("Phase of rxn#",item," intermediate ",rxn[item][state],":",
                   itm[rxn[item][state]]['phase'],"Not recognized" ) 
     return(gas)  
-     
+
+def mw_gas(itm,rxn,item,state): 
+    """ Returns the mass weight of a gas-phase intermediate. Zero if adsorbed """
+    if   rxn[item][state]=='None' or rxn[item][state]==None :
+        mw=0
+    else :
+        if itm[rxn[item][state]]['phase']=='gas' :
+            mw=float(itm[rxn[item][state]]['mw'])
+        elif itm[rxn[item][state]]['phase']=='cat' :
+            mw=0              
+        else :
+            print("Phase of rxn#",item," intermediate ",rxn[item][state],":",
+                  itm[rxn[item][state]]['phase'],"Not recognized" )
+    return(mw)
+ 
      
 def kinetic_constants(conf,itm,rxn,item) : 
     """ Prepares the kinetic constants for direct and (i)reverse semireactions 
     depending on the number of gas-phase intermediates. 
-    Returns error if there are more than two species in gas for a given semirxn. 
-    """ 
-    # Kinetic constant for each reaction.         
-    # If there are no species in gas-phase, multiply by kB*T/h. 
-    # In any case, multiply by exp(-Ga/kB*T) (Arrhenius Eq, or sticking coefficient).  
-    # Not yet implemented: reactions at interface and diffusions. 
-    howmanygasd=is_gas(rxn,itm,item,'is1')+is_gas(rxn,itm,item,'is2')
-    howmanygasi=is_gas(rxn,itm,item,'fs1')+is_gas(rxn,itm,item,'fs2')
-    area=conf['Reactor']['areaactivesite']
-    
+    Returns error if there are more than two species in gas for a given semirxn. """
+    rxn[item]['kd']="" 
+    rxn[item]['ki']="" 
+    howmanygasd=is_gas(itm,rxn,item,'is1')+is_gas(itm,rxn,item,'is2')
+    howmanygasi=is_gas(itm,rxn,item,'fs1')+is_gas(itm,rxn,item,'fs2')
+    area="{:.6f}".format( float(conf['Reactor']['areaactivesite']) ) # Site area in Å²
+     
     if   howmanygasd==0 :
-        rxn[item]['kd']+=kbh+"*T*exp(-max(0.0,"+\
+        # If semireaction on surface: use Arrhenius kb*T/h*exp(-Ga/kB*T)
+        rxn[item]['kd']="k"+item+"d:=evalf("+kbh+"*T*exp(-max(0.0,"+\
                         "{:.6f}".format( rxn[item]['aGd'])+","+\
                         "{:.6f}".format( rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ): "
+                        ")/("+kbev+"*T)) ) :"
     elif howmanygasd==1 :
-        rxn[item]['kd']+="exp(-max(0.0,"+\
+        mw="{:.6f}".format(mw_gas(itm,rxn,item,'is1')+mw_gas(itm,rxn,item,'is2'))
+                                           # (atm=>Pa)*Area*(Å²=>m²)
+        rxn[item]['kd']="k"+item+"d:=evalf((101325*"+area+"*1E-20"+\
+                        "*exp(-max(0.0,"+\
                         "{:.6f}".format( rxn[item]['aGd'])+","+\
                         "{:.6f}".format( rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ): "
+                        ")/("+kbev+"*T)))"+\
+                        "/sqrt(2*Pi*1.6605390400E-27*"+mw+"*1.3806485200-23*T )) : "
+                        # Denominator: sqrt(2Pi(elemmass@kg)*massweight*kB(SI)*T
     else :
         print("WARNING! direct reaction #",item,"has",howmanygasd,"gas/aq reactants.")
         print("Abnormal termination")
         exit()
      
     if   howmanygasi==0 :
-        rxn[item]['ki']+=kbh+"*T*exp(-max(0.0,"+\
+        rxn[item]['ki']="k"+item+"i:=evalf("+kbh+"*T*exp(-max(0.0,"+\
                         "{:.6f}".format( rxn[item]['aGi'])+","+\
                         "{:.6f}".format(-rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ): "
+                        ")/("+kbev+"*T)) ) : "
     elif howmanygasi==1 :
-        rxn[item]['ki']+="*exp(-max(0.0,"+\
-                        "{:.6f}".format( rxn[item]['aGi'])+","+\
-                        "{:.6f}".format(-rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ): "
+        mw="{:.6f}".format(mw_gas(itm,rxn,item,'fs1')+mw_gas(itm,rxn,item,'fs2')) 
+        rxn[item]['ki']="k"+item+"i:=evalf((101325*"+area+"*1E-20"+\
+                        "*exp(-max(0.0,"+\
+                        "{:.6f}".format( rxn[item]['aGd'])+","+\
+                        "{:.6f}".format( rxn[item]['dGd'])+\
+                        ")/("+kbev+"*T)))"+\
+                        "/sqrt(2*Pi*1.6605390400E-27*"+mw+"*1.3806485200-23*T )) : "
     else :
         print("WARNING! reverse reaction #",item,"has",howmanygasd,"gas/aq reactants.")
         print("Abnormal termination")
@@ -296,8 +316,8 @@ def process_rxn(conf,itm,rxn,ltp):
         rxn[item]['dGd']=""
         rxn[item]['aGd']=""
         rxn[item]['aGi']=""
-        rxn[item]['kd']="k"+item+"d:=evalf("   
-        rxn[item]['ki']="k"+item+"i:=evalf("    
+#        rxn[item]['kd']="k"+item+"d:=evalf("   
+#        rxn[item]['ki']="k"+item+"i:=evalf("    
         rxn[item]['rtd']="r"+item+":=(t)-> k"+item+"d"
         rxn[item]['rti']="-k"+item+"i"
         rxn[item]['srtd']="sr"+item+":= k"+item+"d" 
@@ -331,7 +351,7 @@ def process_rxn(conf,itm,rxn,ltp):
         # List of reactions for fprintf function in Maple 
         ltp['rxn'].append("sr"+item)
            
-    return(rxn,itm)
+    return(itm,rxn)
         
 def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
     # Before called printtxtsr
@@ -357,14 +377,10 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
             print('P'+item+":=",itm[item]['pressure']," : ") 
       
     print("\n# Kinetic constants")
-    #for item in sorted(gas) :
-    #    print(gas[item]['kads'+cat],gas[item]['kdes'+cat])
     for item in sorted(rxn) :
-        print(rxn[item]['kd'],"\n",rxn[item]['ki']  )
+        print(rxn[item]['kd']+"\n"+rxn[item]['ki']  )
       
     print("\n# Reaction rates:")
-    #for item in sorted(gas) :
-    #    print(gas[item]['rads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['rtd'],rxn[item]['rti'])
       
@@ -408,8 +424,6 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     print(  os.popen("echo \""+tmp[:-1]+"\" | sed 's/-c/-sc/g' " ).read()[:-1] )
     
     print("\n# Reaction rates after solver: ")
-    #for item in sorted(gas) :
-    #    print(gas[item]['srads'+cat])
     for item in sorted(rxn) :
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
                    
