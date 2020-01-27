@@ -1,0 +1,35 @@
+[General]                         
+  mapleoutput="Cu111-dd-1.xls"  # Output files
+  catalyst="Cu111"              # 
+                                  
+[Reactor]                         
+  reactortype="Differential"      
+  reactortemp=600               # Temperature in Kelvin
+  time1=[ 1E-9, 1E-6, 1E-3, 1E-2, 1E-1, 1E0, 1E1, 1E2, 1E3, 1E4, 1E5, 1E6, 1E7, 1E8, 1E9, 1E10, 1E11, 1E12 ]  # Reaction times   
+# time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
+  pressuredamptime=1            # Pressure damping time in seconds, >1E-13 s. Otherwise no damping.    
+  sitebalancespecies=i0000      # Species that will center the site balance. 
+  areaactivesite=6.60125        # Area of active sites in Å².  
+                                  
+[Pressures]                       
+  g2621=1                       # In atmospheres. Remaining species treated as zero.  
+     label     phase            G            mw           frq   
+     g0201      gas       0.0000000000       2.00         []  
+     g0021      gas       4.5493771615      32.00         []  
+     g0211      gas       0.0000000000      18.00         []  
+     i0000      cat       0.0000000000       0.00         []  
+     i0201      cat      -0.5375901470       0.00         []  
+     i0101      cat      -0.2687950735       0.00         []  
+     i0021      cat       3.7943227585       0.00         []  
+     i0011      cat       0.4997001185       0.00         []  
+     i0111      cat      -0.2358853680       0.00         []  
+     i0211      cat      -0.2729899310       0.00         []  
+      label        is1        is2        fs1        fs2            G
+     ads001      g0201      i0000      i0201       None     0.000000000     
+     ads002      g0021      i0000      i0021       None     4.549377161     
+     ads003      g0211      i0000      i0211       None     0.000000000     
+     rxn101      i0201      i0000      i0101      i0101    -0.537590147     
+     rxn102      i0021      i0000      i0011      i0011     3.692623290     
+     rxn103      i0211      i0000      i0111      i0101     0.784128024     
+     rxn104      i0211      i0011      i0111      i0111     0.303431508     
+     rxn105      i0111      i0000      i0011      i0101     1.205999535     
