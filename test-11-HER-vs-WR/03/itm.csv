@@ -1,0 +1,6 @@
+     label     phase            G            mw     ne   frq  note 
+     g0201      gas      -0.4050000000       2.00    2    []  "0(H)-.4050(-T*S) " 
+     g0101      gas      -0.3384000000       1.00    0    []  "CHE Rossmeisl et al., pH=0, entropy"  
+     i0000      cat       0.0000000000       0.00    0    []  " " 
+     i0201      cat      -0.4050000000       0.00    2    []  "Very weak adsorption" 
+     i0101      cat      -0.3045712868       0.00    1    []  "-0.2687...(E)-0.03577(-T*S) " 
