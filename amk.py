@@ -5,12 +5,12 @@
 """This package generates the Input of microkinetic models for Maple.  
    
 Possible expansions:  
+    * Put is and fs as lists, to support H2 dissociative adsorption for instance.
     * Non-isothermal reactors, T dependent on time. 
-    * Non-isobaric   reactors, P dependent on time.  
+    * Non-isobaric   reactors, P dependent on time.   
     * Cycle the model making the energies depend on two or more parameters (PCA). 
     * Consider coverage effects.    
-    * Put area of active site. 
-    * Unidimensionah diffusions, taking stationary state conditions in Fick's law. 
+    * Unidimensional diffusion, taking stationary state conditions in Fick's law. 
 Security checks to implement: 
     * Check if float(conf['Catalyst']['areaactivesite']) gives no error. 
     * Idem float(conf['Catalyst']['secondlayerthickness']) if gas-phase species. 

@@ -39,34 +39,27 @@ def rxntime(conf) :
         timel=False 
         time1=time1raw
     return time1, timel 
-  
-def read(filename='./int.csv'): 
-    """This function reads a file containing information of catalysts, gas, intermediates, or reactions. 
-    It requires pandas to be loaded.  
     
+def read(filename='./itm.csv') :  
+    """This function reads a file containing information of species in 
+    gas, aqu(eous), or adsorbed on cat(alyst). 
+    It can also read the reactions file. . 
+    It requires pandas to be loaded.  
+      
     Args: 
         filename: Input file. The columns are separated by one or more spaces.
             Energies must be provided in eV and frequencies in cm-1 Format:
-             label  phase  formula     G      e   mw    frq                     
-              gR     gas   CH3CHO      0.000  1  52.0   [99,500,2000]    
-              gP     gas   CH2OCH2     0.100  1  52.0   [100,200,1000]  
-              gU     gas   CH2CHOH     0.100  1  52.0   [120,350,1500] 
-              iO     cat   EmptySurf   0.000  1   0.0   []              
-              iR     cat   CH3CHO     -1.000  1  52.0   [99,500,2000]            
-              iI1    cat   CH2OCH2    -1.050  1  52.0   [100,200,1000] 
-              iI2    cat   CH2CHOH    -0.950  1  52.0   [100,200,1000] 
-              iP     cat   Unknown    -1.000  1  52.0   [100,200,1000]            
-              iU     cat   Unknown    -2.000  1  52.0   [120,350,1500]            
+      
     Returns: 
-        dicint: a dictionary containing at least the tags, energies, and frequencies of all species. 
-    
+        dicint: a dictionary containing at least the tags, energies, and frequencies of all species.     
+      
     """
-    
+     
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='label').T.to_dict()
     return dic  
      
      
-def get_pressure_damp(conf) 
+def get_pressure_damp(conf) :  
     """Parse pressure damp from configuration file
      
     Args: 
@@ -91,7 +84,7 @@ def get_pressure_damp(conf)
     return pdamp1, pdamp2 
      
      
-def process_intermediates(conf,itm,ltp):
+def process_intermediates(conf,itm,ltp) :
     """This function process the "intermediates" dataframe to generate 
     the site-balance equation, the SODE-solver, and the initial conditions as clean surface. 
     It also initializes the list of differential equations.  
@@ -190,27 +183,27 @@ def process_intermediates(conf,itm,ltp):
     # In the initial conditions, replace the last comma by a colon 
     initialc=initialc[:-1]+" : "
       
-    #print("\n",sbalance,"\n",initialc,"\n",sodesolv) 
     return itm, sbalance, sodesolv, initialc, rhsparse  
      
      
-def is_gas(itm,rxn,item,state): 
+def is_gas(itm,rxn,item,state) :  
     """ Returns 1 if a given (initial/final) state of rxn #item is gas.
     Returns 0 otherwise.  """
     #print(item,state,rxn[item][state],itm['gP']['phase']) 
-    if   rxn[item][state]=='None' or rxn[item][state]==None :
+    if   rxn[item][state]=='None' or rxn[item][state]==None : 
         gas=0 
     else : 
-        if itm[rxn[item][state]]['phase']=='gas' :
-            gas=1 
-        elif itm[rxn[item][state]]['phase']=='cat' :
-            gas=0
+        if itm[rxn[item][state]]['phase']=='gas' : 
+            gas=1  
+        elif itm[rxn[item][state]]['phase']=='cat' or itm[rxn[item][state]]['phase']=='aqu' : 
+            gas=0  
         else : 
-            print("Phase of rxn#",item," intermediate ",rxn[item][state],":",
+            print("Phase of rxn#",item," intermediate ",rxn[item][state],":", 
                   itm[rxn[item][state]]['phase'],"Not recognized" ) 
     return gas   
-
-def mw_gas(itm,rxn,item,state): 
+        
+        
+def mw_gas(itm,rxn,item,state) :  
     """ Returns the mass weight of a gas-phase intermediate. Zero if adsorbed """
     if   rxn[item][state]=='None' or rxn[item][state]==None :
         mw=0
@@ -236,13 +229,13 @@ def kinetic_constants(conf,itm,rxn,item) :
     howmanygasd=is_gas(itm,rxn,item,'is1')+is_gas(itm,rxn,item,'is2')
     howmanygasi=is_gas(itm,rxn,item,'fs1')+is_gas(itm,rxn,item,'fs2')
     area="{:.6f}".format( float(conf['Catalyst']['areaactivesite']) ) # Site area in Å²
-     
+    # Direct semireaction:      
     if   howmanygasd==0 :
         # If semireaction on surface: use Arrhenius kb*T/h*exp(-Ga/kB*T)
         rxn[item]['kd']="k"+item+"d:=evalf("+kbh+"*T*exp(-max(0.0,"+\
                         "{:.6f}".format( rxn[item]['aGd'])+","+\
                         "{:.6f}".format( rxn[item]['dGd'])+\
-                        ")/("+kbev+"*T)) ) :"
+                        ")/("+kbev+"*T)) ) : "
     elif howmanygasd==1 :
         mw="{:.6f}".format(mw_gas(itm,rxn,item,'is1')+mw_gas(itm,rxn,item,'is2'))
                                            # (atm=>Pa)*Area*(Å²=>m²)
@@ -257,13 +250,13 @@ def kinetic_constants(conf,itm,rxn,item) :
         print("WARNING! direct reaction #",item,"has",howmanygasd,"gas/aq reactants.")
         print("Abnormal termination")
         exit()
-     
-    if   howmanygasi==0 :
+    # Reverse (i) semireaction:      
+    if   howmanygasi==0 : 
         rxn[item]['ki']="k"+item+"i:=evalf("+kbh+"*T*exp(-max(0.0,"+\
                         "{:.6f}".format( rxn[item]['aGi'])+","+\
                         "{:.6f}".format(-rxn[item]['dGd'])+\
                         ")/("+kbev+"*T)) ) : "
-    elif howmanygasi==1 :
+    elif howmanygasi==1 : 
         mw="{:.6f}".format(mw_gas(itm,rxn,item,'fs1')+mw_gas(itm,rxn,item,'fs2')) 
         rxn[item]['ki']="k"+item+"i:=evalf((101325*"+area+"*1E-20"+\
                         "*exp(-max(0.0,"+\
@@ -275,9 +268,9 @@ def kinetic_constants(conf,itm,rxn,item) :
         print("WARNING! reverse reaction #",item,"has",howmanygasd,"gas/aq reactants.")
         print("Abnormal termination")
         exit()
-     
-     
-def process_itm_on_rxn(conf,itm,rxn,item,state='is1'): 
+        
+      
+def process_itm_on_rxn(conf,itm,rxn,item,state='is1') :  
     """ Use the is/fs states for each reaction to get their activation energies. 
     Then write the formula for reaction rate according to their intermediates. 
         This formula is split between rtd (direct part) and rti (inverse part). 
@@ -293,37 +286,40 @@ def process_itm_on_rxn(conf,itm,rxn,item,state='is1'):
         sign='+' # Increase products 
     else : 
         print("Wrong state for reaction", item, "\nOnly 'is1', 'is2', 'fs1', and 'fs2' supported") 
-        exit()
+        exit() 
          
     # Get energy of the (initial/final) state "i" 
     if rxn[item][state]=='None' or rxn[item][state]==None :
         G=0.0
     else:
         try:
-            G=itm[rxn[item][state]]['G']
-        except:
+            G=itm[rxn[item][state]]['G'] 
+        except: 
             print("\n Error!, reaction ",item, " comes from ",state, rxn[item][state],
                   " whose energy was not found.")
             exit()
         # If (initial/final) state "i" is on catalyst, include concentration in rxn equation
         # and add rxn to respective differential equation. 
         if  itm[rxn[item][state]]['phase']=='cat':
-            #rxn[item]['rt'+semirxn]=rxn[item]['rt'+semirxn]+"*c"+rxn[item][state]+"(t)"
-            #rxn[item]['srt'+semirxn]=rxn[item]['srt'+semirxn]+"*sc"+rxn[item][state]
             rxn[item]['rt'+semirxn]+="*c"+rxn[item][state]+"(t)"
             rxn[item]['srt'+semirxn]+="*sc"+rxn[item][state]
-            # Exclude the central species from site-balance equation from differential equations
+            # Do not generate differential equation for site-balance species (empty site?). 
             if rxn[item][state]!=conf['Catalyst']['sitebalancespecies'] :
                 itm[rxn[item][state]]['diff']+=sign+"r"+item+"(t)"
-        # If (initial/final) state "i" is "gas" (or aqueous) use p instead of c(t) 
+        # If (initial/final) state "i" is "gas" (or aqueous) use P instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='gas':
             rxn[item]['rt'+semirxn]+="*P"+rxn[item][state]
             rxn[item]['srt'+semirxn]+="*P"+rxn[item][state]
+        # If (initial/final) state "i" is "aqu" (or aqueous) use CSL instead of c(t) 
+        # and do not generate any differential equation.  
+        elif itm[rxn[item][state]]['phase']=='aqu': 
+            rxn[item]['rt'+semirxn]+="*CSL"+rxn[item][state] 
+            rxn[item]['srt'+semirxn]+="*CSL"+rxn[item][state] 
     return G  
-     
-     
-def process_rxn(conf,itm,rxn,ltp):
+       
+        
+def process_rxn(conf,itm,rxn,ltp) : 
     """Subroutine that expands the "rxn" dictionary of dictionaries to include 
     the kinetic constants and rates of all chemical reactions. 
     It also expands the list of differential equations in "itm"
@@ -381,7 +377,8 @@ def process_rxn(conf,itm,rxn,ltp):
            
     return itm, rxn 
         
-def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
+          
+def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp) :  
     # Before called printtxtsr
     """Subroutine that prints a given calculation for Maple, just a 's'ingle 'r'un 
       
@@ -397,12 +394,26 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     """
     
     print("# Heading " )
-    #print("restart: " )
+    print("restart : \n " )  
      
+    # Open file and print labels
+    print('filename1:=FileTools[Text][Open](',conf['General']['mapleoutput'],',create,overwrite) : ') 
+    print('fprintf(filename1,"%q %q\\n",','catalyst, "timei", "T",', 
+          ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
+          ', '.join(['"'+item+'"' for item in ltp['csl']]) ,",",
+          ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
+          ', '.join(['"'+item+'"' for item in ltp['rxn']]) ,   
+          " ): " )   
+    print('FileTools[Flush](filename1) : \n ')  
+      
+    # Temperature, pressures, and concentration.  
     print("T:=", conf.get("Reactor","reactortemp"), " : " )
     for item in sorted(itm) : 
         if itm[item]['phase']=='gas' :  
             print('P'+item+":=",itm[item]['pressure']," : ") 
+    for item in sorted(itm) : 
+        if itm[item]['phase']=='aqu' :   
+            print('CSL'+item+":=",itm[item]['concentration']," : ") 
       
     print("\n# Kinetic constants")
     for item in sorted(rxn) :
@@ -425,23 +436,15 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
       
     print("\n# SODE Solver: ")
     print(sodesolv)
-       
-    # Print labels, before the timeloop and flush. 
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",','catalyst, "timei", "T",', 
-          ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
-          ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
-          ', '.join(['"'+item+'"' for item in ltp['rxn']]) ,   
-          " ): \n " )  
-    print('\nflush(',conf['General']['mapleoutput'],'): ')
-         
+              
     # Time control: 
     time1,timel=rxntime(conf)
     if timel : 
-        print("for timei in " + str(time1) + " do ")
+        print("\n\nfor timei in " + str(time1) + " do ")
     else : 
         print("timei:= "+time1+" : ")
       
-    print("S:=Solution(timei):")
+    print("S:=Solution(timei) : ")
     
     print("\n# Solution parser: ")
     print(rhsparse)
@@ -453,21 +456,22 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
     
     print("\n# Reaction rates after solver: ")
     for item in sorted(rxn) :
-        print(rxn[item]['srtd'],rxn[item]['srti'],":")
+        print(rxn[item]['srtd'],rxn[item]['srti']," : ")
                    
     # Print results 
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['Catalyst']['name'],', timei, T,',
-          ', '.join([item for item in ltp['prs']]) ,",", 
+    print("\nfprintf(filename1",',"%q %q\\n",',conf['Catalyst']['name'],', timei, T,',
+          ', '.join([item for item in ltp['prs']]) ,",",
+          ', '.join([item for item in ltp['csl']]) ,",", 
           ', '.join([item for item in ltp['itm']]) ,",", 
           ', '.join([item for item in ltp['rxn']]) , 
           " ): " )  
        
-    print('\nflush(',conf['General']['mapleoutput'],'): ')
+    print('\nFileTools[Flush](filename1) : ' )   
      
     if timel :     
         print("\nod: \n ") 
     
     # Print close file instruction  
-    print('\nclose(',conf['General']['mapleoutput'],'): \n\n')
+    print('\nclose(filename1) : \n \n ')
      
     
