@@ -1,5 +1,5 @@
 [General]                         
-  mapleoutput="Cu111HER-10c.xls" # Output files
+  mapleoutput="Cu111HER-10a.xls" # Output files
   catalyst="Cu111"              # 
                                   
 [Reactor]                         
