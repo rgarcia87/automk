@@ -1,0 +1,9 @@
+label   is1   is2   fs1   fs2    G     e   frq            
+ aR     gR    iO    iR    None   0.00  1  [99,500,2000]       
+ aP     gP    iO    iP    None   0.10  1  [100,200,1000]  
+ aU     gU    iO    iU    None   0.10  1  [120,350,1500]    
+ r1     iR    None  iI1   None  -0.02  1  [50,500,2000]   
+ r2     iR    None  iI2   None   0.02  1  [50,500,2000]   
+ r3     iI1   None  iP    None   0.03  1  [50,500,2000]   
+ r4     iI2   None  iP    None  -0.03  1  [50,500,2000]   
+ r5     iI2   None  iU    None   0.40  1  [100,200,1000]  

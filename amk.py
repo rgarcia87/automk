@@ -1,6 +1,6 @@
 #!/usr/bin/python3 
 # Created by Rodrigo García-Muelas 
-# Rev.2020Jan10
+# Rev.2020Jan28
 # 
 """This package generates the Input of microkinetic models for Maple.  
    
@@ -11,6 +11,9 @@ Possible expansions:
     * Consider coverage effects.    
     * Put area of active site. 
     * Unidimensionah diffusions, taking stationary state conditions in Fick's law. 
+Security checks to implement: 
+    * Check if float(conf['Catalyst']['areaactivesite']) gives no error. 
+    * Idem float(conf['Catalyst']['secondlayerthickness']) if gas-phase species. 
 """
 
 # Load libraries 

@@ -1,7 +1,7 @@
 label  phase  formula     G      e   mw    frq                     
- gR     aqu   CH3CHO      0.000  1  52.0   [99,500,2000]    
- gP     aqu   CH2OCH2     0.100  1  52.0   [100,200,1000]  
- gU     aqu   CH2CHOH     0.100  1  52.0   [120,350,1500] 
+ gR     gas   CH3CHO      0.000  1  52.0   [99,500,2000]    
+ gP     gas   CH2OCH2     0.100  1  52.0   [100,200,1000]  
+ gU     gas   CH2CHOH     0.100  1  52.0   [120,350,1500] 
  iO     cat   EmptySurf   0.000  1   0.0   []             
  iR     cat   CH3CHO     -1.000  1  52.0   [99,500,2000]            
  iI1    cat   CH2OCH2    -1.050  1  52.0   [100,200,1000] 

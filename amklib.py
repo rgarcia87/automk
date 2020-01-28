@@ -6,6 +6,7 @@ import copy
 #Constants 
 kbh="20836612225.1252"    # Boltzmann constant divided by Planck constant, s^-1, string.  
 kbev="8.617333262145E-5"  # Boltzmann constant in eV·K−1, string. 
+avogadro=6.02214199E23    # Avogadro's constant. 
      
 def readconf(filename='./parameters.txt'):  
     """This function reads the input parameters from a file
@@ -20,7 +21,7 @@ def readconf(filename='./parameters.txt'):
     
     conf=configparser.ConfigParser(inline_comment_prefixes=('#'))
     conf.read(filename)
-    return(conf)  
+    return conf   
     
 def rxntime(conf) : 
     """Subroutine that interpretes the time.   
@@ -37,7 +38,7 @@ def rxntime(conf) :
     else :                     # If it is an unique value  
         timel=False 
         time1=time1raw
-    return(time1,timel)
+    return time1, timel 
   
 def read(filename='./int.csv'): 
     """This function reads a file containing information of catalysts, gas, intermediates, or reactions. 
@@ -62,7 +63,32 @@ def read(filename='./int.csv'):
     """
     
     dic=pd.read_csv(filename, delim_whitespace=True, index_col='label').T.to_dict()
-    return(dic) 
+    return dic  
+     
+     
+def get_pressure_damp(conf) 
+    """Parse pressure damp from configuration file
+     
+    Args: 
+        conf: Configuration data. 
+     
+    Returns:      
+        pdamp1: Pressure damp in processing. 
+        pdamp2: Pressure damp in post-processing. 
+    """
+         
+    try :          
+        pressuredamptime=float(conf['Reactor']['pressuredamptime'])   
+    except :   
+        pressuredamptime=1.0   
+    
+    if pressuredamptime>1E-13 : 
+        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))^2*"
+        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))^2*"
+    else : 
+        pdamp1=""
+        pdamp2=""
+    return pdamp1, pdamp2 
      
      
 def process_intermediates(conf,itm,ltp):
@@ -82,36 +108,24 @@ def process_intermediates(conf,itm,ltp):
     """
     
     # Initialize variables related to intermediates. 
-    sbalance="c"+conf["Reactor"]["sitebalancespecies"]+":=(t)-> 1.0"  
+    sbalance="c"+conf['Catalyst']['sitebalancespecies']+":=(t)-> 1.0"  
     sodesolv="Solution:=dsolve({"   
     initialc="IC0:="
-    rhsparse=""
-    index=1
-    
-    # List to print from postprocessing: intermediates: Initialize with site-balance species. 
-    ltp['itm']=["sc"+conf["Reactor"]["sitebalancespecies"]]     
-     
-    # Get pressure damp 
-    try :      
-        pressuredamptime=float(conf['Reactor']['pressuredamptime'])   
-    except :   
-        pressuredamptime=1.0   
-    
-    if pressuredamptime>1E-13 : 
-        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))^2*"
-        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))^2*"
-    else : 
-        pdamp1=""
-        pdamp2=""
-        
-    ltp['prs']=[]
+    rhsparse="" 
+    index=1  
+    # Initialize list-to-print for postprocessing
+    ltp['prs']=[] # ltp of pressures. 
+    ltp['csl']=[] # ltp of concentrations-in-second-layer.     
+    ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
+    # Get pressure damp     
+    pdamp1,pdamp2=get_pressure_damp(conf)         
       
     # Process intermediates, starting by adsorbed (cat), then gas. 
     for item in sorted(itm) :  
     # SERGIO: 
     # for key,value in sorted(itm).items() : #key~item ; value~itM[item] (all line)             
     # so the input of the sub-function will be the key and value
-        if  itm[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] :      
+        if  itm[item]['phase']=='cat' and item!=conf['Catalyst']['sitebalancespecies'] :      
             # A surface species 
                
             # Initialize diff equations to count in which reactions each species participate.     
@@ -150,9 +164,21 @@ def process_intermediates(conf,itm,ltp):
             # Generate list of pressures
             #ltp['prs']+="P"+item+", "
             ltp['prs'].append("P"+item)
-              
-        elif item!=conf["Reactor"]["sitebalancespecies"] : 
-            print("Unknown phase for ",item," \n I only recognize 'cat' and 'gas'") 
+             
+        elif itm[item]['phase']=='aqu' : 
+            # Get concentrations and convert to molecules/activesite. 
+            try :  
+                itm[item]['concentration']=(float(conf['Concentrations'][item])*
+                                            float(conf['Catalyst']['areaactivesite'])*
+                                            float(conf['Catalyst']['secondlayerthickness'])*
+                                            avogadro*1E-27) 
+            except :   
+                itm[item]['concentration']=0.0  
+            # Generate list-to-print of concentrations-in-the-second-layer. 
+            ltp['csl'].append("CSL"+item)   
+                  
+        elif item!=conf['Catalyst']['sitebalancespecies'] : 
+            print("Unknown phase for ",item," \n I only recognize 'aqu', 'cat', and 'gas'") 
             exit()
                                             
     # Close the site-balance equation     
@@ -165,7 +191,7 @@ def process_intermediates(conf,itm,ltp):
     initialc=initialc[:-1]+" : "
       
     #print("\n",sbalance,"\n",initialc,"\n",sodesolv) 
-    return(itm,sbalance,sodesolv,initialc,rhsparse) 
+    return itm, sbalance, sodesolv, initialc, rhsparse  
      
      
 def is_gas(itm,rxn,item,state): 
@@ -182,7 +208,7 @@ def is_gas(itm,rxn,item,state):
         else : 
             print("Phase of rxn#",item," intermediate ",rxn[item][state],":",
                   itm[rxn[item][state]]['phase'],"Not recognized" ) 
-    return(gas)  
+    return gas   
 
 def mw_gas(itm,rxn,item,state): 
     """ Returns the mass weight of a gas-phase intermediate. Zero if adsorbed """
@@ -193,11 +219,13 @@ def mw_gas(itm,rxn,item,state):
             mw=float(itm[rxn[item][state]]['mw'])
         elif itm[rxn[item][state]]['phase']=='cat' :
             mw=0              
+        elif itm[rxn[item][state]]['phase']=='aqu' :
+            mw=0 
         else :
             print("Phase of rxn#",item," intermediate ",rxn[item][state],":",
                   itm[rxn[item][state]]['phase'],"Not recognized" )
-    return(mw)
- 
+    return mw 
+     
      
 def kinetic_constants(conf,itm,rxn,item) : 
     """ Prepares the kinetic constants for direct and (i)reverse semireactions 
@@ -207,7 +235,7 @@ def kinetic_constants(conf,itm,rxn,item) :
     rxn[item]['ki']="" 
     howmanygasd=is_gas(itm,rxn,item,'is1')+is_gas(itm,rxn,item,'is2')
     howmanygasi=is_gas(itm,rxn,item,'fs1')+is_gas(itm,rxn,item,'fs2')
-    area="{:.6f}".format( float(conf['Reactor']['areaactivesite']) ) # Site area in Å²
+    area="{:.6f}".format( float(conf['Catalyst']['areaactivesite']) ) # Site area in Å²
      
     if   howmanygasd==0 :
         # If semireaction on surface: use Arrhenius kb*T/h*exp(-Ga/kB*T)
@@ -285,14 +313,14 @@ def process_itm_on_rxn(conf,itm,rxn,item,state='is1'):
             rxn[item]['rt'+semirxn]+="*c"+rxn[item][state]+"(t)"
             rxn[item]['srt'+semirxn]+="*sc"+rxn[item][state]
             # Exclude the central species from site-balance equation from differential equations
-            if rxn[item][state]!=conf["Reactor"]["sitebalancespecies"] :
+            if rxn[item][state]!=conf['Catalyst']['sitebalancespecies'] :
                 itm[rxn[item][state]]['diff']+=sign+"r"+item+"(t)"
         # If (initial/final) state "i" is "gas" (or aqueous) use p instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='gas':
             rxn[item]['rt'+semirxn]+="*P"+rxn[item][state]
             rxn[item]['srt'+semirxn]+="*P"+rxn[item][state]
-    return(G) 
+    return G  
      
      
 def process_rxn(conf,itm,rxn,ltp):
@@ -351,7 +379,7 @@ def process_rxn(conf,itm,rxn,ltp):
         # List of reactions for fprintf function in Maple 
         ltp['rxn'].append("sr"+item)
            
-    return(itm,rxn)
+    return itm, rxn 
         
 def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp): 
     # Before called printtxtsr
@@ -389,7 +417,7 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
      
     print("\n# Differential equations: ")
     for item in sorted(itm) :
-        if  itm[item]['phase']=='cat' and item!=conf["Reactor"]["sitebalancespecies"] : 
+        if  itm[item]['phase']=='cat' and item!=conf['Catalyst']['sitebalancespecies'] : 
             print(itm[item]['diff']," : ")
       
     print("\n# Initial conditions: ")
@@ -428,7 +456,7 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp):
         print(rxn[item]['srtd'],rxn[item]['srti'],":")
                    
     # Print results 
-    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['General']['catalyst'],', timei, T,',
+    print("\nfprintf(",conf['General']['mapleoutput'],',"%q %q\\n",',conf['Catalyst']['name'],', timei, T,',
           ', '.join([item for item in ltp['prs']]) ,",", 
           ', '.join([item for item in ltp['itm']]) ,",", 
           ', '.join([item for item in ltp['rxn']]) , 
