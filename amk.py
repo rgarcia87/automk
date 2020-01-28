@@ -10,6 +10,7 @@ Possible expansions:
     * Cycle the model making the energies depend on two or more parameters (PCA). 
     * Consider coverage effects.    
     * Put area of active site. 
+    * Unidimensionah diffusions, taking stationary state conditions in Fick's law. 
 """
 
 # Load libraries 
