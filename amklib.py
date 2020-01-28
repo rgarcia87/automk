@@ -59,29 +59,29 @@ def read(filename='./itm.csv') :
     return dic  
      
      
-def get_pressure_damp(conf) :  
+def get_damptime(conf) :  
     """Parse pressure damp from configuration file
      
     Args: 
         conf: Configuration data. 
      
     Returns:      
-        pdamp1: Pressure damp in processing. 
-        pdamp2: Pressure damp in post-processing. 
+        dampt1: Pressure damp in processing. 
+        dampt2: Pressure damp in post-processing. 
     """
          
     try :          
-        pressuredamptime=float(conf['Reactor']['pressuredamptime'])   
+        damptime=float(conf['Reactor']['damptime'])   
     except :   
-        pressuredamptime=1.0   
+        damptime=1.0   
     
-    if pressuredamptime>1E-13 : 
-        pdamp1="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*t))^2*"
-        pdamp2="(1-exp(-"+"{:.6E}".format(pressuredamptime)+"*timei))^2*"
+    if  damptime>1E-13 : 
+        dampt1="(1-exp(-"+"{:.6E}".format(damptime)+"*t))^2*"
+        dampt2="(1-exp(-"+"{:.6E}".format(damptime)+"*timei))^2*"
     else : 
-        pdamp1=""
-        pdamp2=""
-    return pdamp1, pdamp2 
+        dampt1=""
+        dampt2=""
+    return dampt1, dampt2 
      
      
 def process_intermediates(conf,itm,ltp) :
@@ -110,8 +110,6 @@ def process_intermediates(conf,itm,ltp) :
     ltp['prs']=[] # ltp of pressures. 
     ltp['csl']=[] # ltp of concentrations-in-second-layer.     
     ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
-    # Get pressure damp     
-    pdamp1,pdamp2=get_pressure_damp(conf)         
       
     # Process intermediates, starting by adsorbed (cat), then gas. 
     for item in sorted(itm) :  
@@ -121,33 +119,26 @@ def process_intermediates(conf,itm,ltp) :
         if  itm[item]['phase']=='cat' and item!=conf['Catalyst']['sitebalancespecies'] :      
             # A surface species 
                
-            # Initialize diff equations to count in which reactions each species participate.     
+            # Initialize diff equations to count in which reactions each species participate     
             itm[item]['diff']="eqd"+item+":=diff(c"+item+"(t),t)="         
             #value['diff']="eqd"+key+":=diff(c"+key+"(t),t)="
              
             # Prepare site balance  
             sbalance+=" -c"+item+"(t)"
              
-            # Prepare list of differential equations for the SODE solver 
+            # Prepare list of differential equations for the SODE solver  
             sodesolv+="eqd"+item+", "
              
             # Prepare list of default initial conditions as clean surface
             initialc+=" c"+item+"(0.0)=0.0,"
               
             # Prepare parser of concentrations after SODE is solved  
-            index+=1 
-            #print("index: ",index, "rhsparse: ", rhsparse , "sodesolv: ", sodesolv)
+            index+=1 # First element should be 1+1=2. Do not touch.  
             rhsparse+="sc"+item+":=rhs(S["+str(index)+"]) : "
-            #print(rhsparse)  
              
             # List of reactions for fprintf function in Maple 
-            #ltp['itm']+="sc"+item+", " 
             ltp['itm'].append("sc"+item)
               
-            # Initialize list of reactions in which each intermediate participate. 
-            # Deprecated: No longer needed.              
-            #itm[item]['rxnlst']=[] 
-                 
         elif itm[item]['phase']=='gas' : 
             # Get partial pressures 
             try : 
@@ -155,7 +146,6 @@ def process_intermediates(conf,itm,ltp) :
             except : 
                 itm[item]['pressure']=0 
             # Generate list of pressures
-            #ltp['prs']+="P"+item+", "
             ltp['prs'].append("P"+item)
              
         elif itm[item]['phase']=='aqu' : 
@@ -270,14 +260,15 @@ def kinetic_constants(conf,itm,rxn,item) :
         exit()
         
       
-def process_itm_on_rxn(conf,itm,rxn,item,state='is1') :  
+def process_itm_on_rxn(conf,itm,rxn,item,state,dampt1,dampt2) :  
     """ Use the is/fs states for each reaction to get their activation energies. 
     Then write the formula for reaction rate according to their intermediates. 
         This formula is split between rtd (direct part) and rti (inverse part). 
     Then update the differential equations in which each adsorbed species participates. 
     If a rectant is in gas phase, include a Hertz-Knudsen term in the constant 
         and its pressure as variable in the reaction rate.
-    """ 
+    """
+     
     if   state=='is1' or state=='is2' : 
         semirxn='d'
         sign='-' # Consume reactants 
@@ -309,13 +300,13 @@ def process_itm_on_rxn(conf,itm,rxn,item,state='is1') :
         # If (initial/final) state "i" is "gas" (or aqueous) use P instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='gas':
-            rxn[item]['rt'+semirxn]+="*P"+rxn[item][state]
-            rxn[item]['srt'+semirxn]+="*P"+rxn[item][state]
+            rxn[item]['rt'+semirxn]+= "*P"+dampt1+rxn[item][state]
+            rxn[item]['srt'+semirxn]+="*P"+dampt2+rxn[item][state] 
         # If (initial/final) state "i" is "aqu" (or aqueous) use CSL instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='aqu': 
-            rxn[item]['rt'+semirxn]+="*CSL"+rxn[item][state] 
-            rxn[item]['srt'+semirxn]+="*CSL"+rxn[item][state] 
+            rxn[item]['rt'+semirxn]+= "*CSL"+dampt1+rxn[item][state]    
+            rxn[item]['srt'+semirxn]+="*CSL"+dampt2+rxn[item][state]   
     return G  
        
         
@@ -334,9 +325,14 @@ def process_rxn(conf,itm,rxn,ltp) :
         rxn: Expanded dict of dicts containing adsorption/desorption constants and rates. (Mutable)
         itm: Expanded dict of dicts with list of differential equations updated with chemical reactions. (Mutable)
     """ 
-        
+          
+    # Get pressure damp     
+    dampt1,dampt2=get_damptime(conf)     
+    print("These are the dampings : ", dampt1, dampt2) 
+         
+    # Initialize list-to-print: reactions, for postprocessing. 
     ltp['rxn']=[]  
-     
+        
     for item in sorted(rxn) : 
         # Initialize variables 
         rxn[item]['dGd']=""
@@ -346,19 +342,20 @@ def process_rxn(conf,itm,rxn,ltp) :
         rxn[item]['rti']="-k"+item+"i"
         rxn[item]['srtd']="sr"+item+":= k"+item+"d" 
         rxn[item]['srti']="-k"+item+"i"
-        howmanygasd=0
-        howmanygasi=0        
-        
+        #howmanygasd=0
+        #howmanygasi=0        
+           
         # Use the is/fs states for each reaction to get their activation energies. 
         # Then write the formula for reaction rate according to their intermediates. 
-        #     This formula is splitt between rtd (direct part) and rti (inverse part). 
+        #     This formula is split between rtd (direct part) and rti (inverse part). 
         # Then update the differential equations in which each adsorbed species participates. 
         # If a rectant is in gas phase, include a Hertz-Knudsen term in the constant 
-        #     and its pressure as variable in the reaction rate.      
-        Gi1=process_itm_on_rxn(conf,itm,rxn,item,'is1')  
-        Gi2=process_itm_on_rxn(conf,itm,rxn,item,'is2')  
-        Gf1=process_itm_on_rxn(conf,itm,rxn,item,'fs1')  
-        Gf2=process_itm_on_rxn(conf,itm,rxn,item,'fs2')  
+        #     and its pressure as variable in the reaction rate.
+        # For gaseous and aqueous species, include a damping term for numerical stability.       
+        Gi1=process_itm_on_rxn(conf,itm,rxn,item,'is1',dampt1,dampt2)  
+        Gi2=process_itm_on_rxn(conf,itm,rxn,item,'is2',dampt1,dampt2)  
+        Gf1=process_itm_on_rxn(conf,itm,rxn,item,'fs1',dampt1,dampt2)  
+        Gf2=process_itm_on_rxn(conf,itm,rxn,item,'fs2',dampt1,dampt2)  
          
         # Get reaction (dG) and (aG) activation energies for each reaction, both direct and inverse.  
         #print("\n",Gdi1,Gdi2,Gdf1,Gdf2)    

@@ -1,0 +1,38 @@
+[General]                         
+  mapleoutput="Cu111HER-10a.xls" # Output files
+  catalyst="Cu111"              # 
+                                  
+[Reactor]                         
+  reactortype="Differential"      
+  reactortemp=300               # Temperature in Kelvin
+  time1=[ 1E3, 1E6, 1E9 ]       # Reaction times   
+# time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
+  pressuredamptime=1            # Pressure damping time in seconds, >1E-13 s. Otherwise no damping.    
+  sitebalancespecies=i0000      # Species that will center the site balance. 
+  areaactivesite=6.60125        # Area of active sites in Å².  
+                                  
+[Pressures]                       
+  g0101=24.615                  # In atmospheres. Remaining species treated as zero.  
+  g0201=1.0                     # 
+
+[General]                         
+  mapleoutput="Cu111HE1202.xls" # Output files
+                                  
+[Reactor]                         
+  reactortype="Differential"      
+  reactortemp=300               # Temperature in Kelvin
+  time1=[ 1E-6,1E0,1E6,1E12 ]   # Reaction times   
+# time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
+  damptime=1                    # Pressure/Concentration damping time in seconds, >1E-13 s. Otherwise no damping.    
+                                   
+[Catalyst]                        
+  name="Cu100"                  # 
+  sitebalancespecies=iO         # Species that will center the site balance. 
+  areaactivesite=6.60125        # Area of active sites in Å².  
+  secondlayerthickness=4.5      # Thickness of 2nd layer in the double b.l. in Å. 
+                                  
+[Pressures]                       
+# gR=1                          # In atmospheres. Remaining species treated as zero.  
+                                   
+[Concentrations]                   
+  qR=1                          # In mol/L 
