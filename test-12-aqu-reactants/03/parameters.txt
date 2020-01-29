@@ -1,12 +1,12 @@
 [General]                         
-  mapleoutput="Cu111HE1202.xls" # Output files
+  mapleoutput="Cu111HE1203.xls" # Output files
                                   
 [Reactor]                         
   reactortype="Differential"      
   reactortemp=300               # Temperature in Kelvin
   time1=[ 1E-6,1E0,1E6,1E12 ]   # Reaction times   
 # time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
-  damptime=1                    # Pressure/Concentration damping time in seconds, >1E-13 s. Otherwise no damping.    
+  damptime=0                    # Pressure/Concentration damping time in seconds, >1E-13 s. Otherwise no damping.    
                                    
 [Catalyst]                        
   name="Cu100"                  # 

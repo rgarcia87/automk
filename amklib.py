@@ -76,8 +76,8 @@ def get_damptime(conf) :
         damptime=1.0   
     
     if  damptime>1E-13 : 
-        dampt1="(1-exp(-"+"{:.6E}".format(damptime)+"*t))^2*"
-        dampt2="(1-exp(-"+"{:.6E}".format(damptime)+"*timei))^2*"
+        dampt1="*(1-exp(-"+"{:.6E}".format(damptime)+"*t))^2"
+        dampt2="*(1-exp(-"+"{:.6E}".format(damptime)+"*timei))^2"
     else : 
         dampt1=""
         dampt2=""
@@ -107,8 +107,7 @@ def process_intermediates(conf,itm,ltp) :
     rhsparse="" 
     index=1  
     # Initialize list-to-print for postprocessing
-    ltp['prs']=[] # ltp of pressures. 
-    ltp['csl']=[] # ltp of concentrations-in-second-layer.     
+    ltp['prs']=[] # ltp of pressures and concentrations-in-second-layer.     
     ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
       
     # Process intermediates, starting by adsorbed (cat), then gas. 
@@ -157,8 +156,8 @@ def process_intermediates(conf,itm,ltp) :
                                             avogadro*1E-27) 
             except :   
                 itm[item]['concentration']=0.0  
-            # Generate list-to-print of concentrations-in-the-second-layer. 
-            ltp['csl'].append("CSL"+item)   
+            # Generate list-to-print of concentrations-in-the-second-layer; put along pressures. 
+            ltp['prs'].append("CSL"+item)   
                   
         elif item!=conf['Catalyst']['sitebalancespecies'] : 
             print("Unknown phase for ",item," \n I only recognize 'aqu', 'cat', and 'gas'") 
@@ -300,13 +299,13 @@ def process_itm_on_rxn(conf,itm,rxn,item,state,dampt1,dampt2) :
         # If (initial/final) state "i" is "gas" (or aqueous) use P instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='gas':
-            rxn[item]['rt'+semirxn]+= "*P"+dampt1+rxn[item][state]
-            rxn[item]['srt'+semirxn]+="*P"+dampt2+rxn[item][state] 
+            rxn[item]['rt'+semirxn]+= dampt1+"*P"+rxn[item][state]
+            rxn[item]['srt'+semirxn]+=dampt2+"*P"+rxn[item][state] 
         # If (initial/final) state "i" is "aqu" (or aqueous) use CSL instead of c(t) 
         # and do not generate any differential equation.  
         elif itm[rxn[item][state]]['phase']=='aqu': 
-            rxn[item]['rt'+semirxn]+= "*CSL"+dampt1+rxn[item][state]    
-            rxn[item]['srt'+semirxn]+="*CSL"+dampt2+rxn[item][state]   
+            rxn[item]['rt'+semirxn]+= dampt1+"*CSL"+rxn[item][state]    
+            rxn[item]['srt'+semirxn]+=dampt2+"*CSL"+rxn[item][state]   
     return G  
        
         
@@ -328,7 +327,6 @@ def process_rxn(conf,itm,rxn,ltp) :
           
     # Get pressure damp     
     dampt1,dampt2=get_damptime(conf)     
-    print("These are the dampings : ", dampt1, dampt2) 
          
     # Initialize list-to-print: reactions, for postprocessing. 
     ltp['rxn']=[]  
@@ -397,7 +395,6 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp) :
     print('filename1:=FileTools[Text][Open](',conf['General']['mapleoutput'],',create,overwrite) : ') 
     print('fprintf(filename1,"%q %q\\n",','catalyst, "timei", "T",', 
           ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
-          ', '.join(['"'+item+'"' for item in ltp['csl']]) ,",",
           ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
           ', '.join(['"'+item+'"' for item in ltp['rxn']]) ,   
           " ): " )   
@@ -458,7 +455,6 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp) :
     # Print results 
     print("\nfprintf(filename1",',"%q %q\\n",',conf['Catalyst']['name'],', timei, T,',
           ', '.join([item for item in ltp['prs']]) ,",",
-          ', '.join([item for item in ltp['csl']]) ,",", 
           ', '.join([item for item in ltp['itm']]) ,",", 
           ', '.join([item for item in ltp['rxn']]) , 
           " ): " )  
