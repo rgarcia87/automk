@@ -93,94 +93,113 @@
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Heading </Text-field>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal">restart : </Text-field>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">filename1:=FileTools[Text][Open]( &quot;Cu111HE1204.xls&quot; ,create,overwrite) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"><Font encoding="UTF-8">fprintf(filename1,&quot;%q %q\134n&quot;, catalyst, &quot;timei&quot;, &quot;T&quot;, &quot;CSLq0101&quot;, &quot;CSLq0201&quot; , &quot;sci0000&quot;, &quot;sci0101&quot;, &quot;sci0201&quot; , &quot;srad0101&quot;, &quot;srad0201&quot;, &quot;srad0202&quot;  ): </Font></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">FileTools[Flush](filename1) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">T:= 300  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLq0101:= 0.017889149165169378  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLq0201:= 1.3416861873877034e-05  : 
-</Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">for shift in [-0.05, -0.04, -0.03, -0.02, -0.01, 0.00, 0.01, 0.02, 0.03, 0.04, 0.05] do 
-</Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Kinetic constants</Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kad0101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.200000)/(8.617333262145E-5*T)) ) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kad0101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.200000,0.200000)/(8.617333262145E-5*T)) ) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kad0201d:=evalf(20836612225.1252*T*exp(-max(0.0,-0.082000,0.000000)/(8.617333262145E-5*T)) ) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kad0201i:=evalf(20836612225.1252*T*exp(-max(0.0,-0.082000,0.000000)/(8.617333262145E-5*T)) ) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kad0202d:=evalf(20836612225.1252*T*exp(-max(0.0,-0.482000,-0.482000)/(8.617333262145E-5*T)) ) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kad0202i:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,0.482000+shift)/(8.617333262145E-5*T)) ) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Reaction rates:</Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rad0101:=(t)-&gt; kad0101d*CSLq0101*ci0000(t) -kad0101i*ci0101(t) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rad0201:=(t)-&gt; kad0201d*CSLq0201*ci0000(t) -kad0201i*ci0201(t) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rad0202:=(t)-&gt; kad0202d*ci0201(t)*ci0000(t) -kad0202i*ci0101(t)*ci0101(t) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Site-balance equation: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">ci0000:=(t)-&gt; 1.0 -ci0101(t) -ci0201(t) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Differential equations: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi0101:=diff(ci0101(t),t)=+rad0101(t)+rad0202(t)+rad0202(t)  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi0201:=diff(ci0201(t),t)=+rad0201(t)-rad0202(t)  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Initial conditions: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">IC0:= ci0101(0.0)=0.0, ci0201(0.0)=0.0 : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># SODE Solver: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">Solution:=dsolve({eqdi0101, eqdi0201, IC0}, numeric, method=rosenbrock, maxfun=0, abserr=1E-16, interr=false);</Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">timei:= 1000000 ; </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">#for timei in [1e-06, 1.0, 1000000.0, 1000000000000.0] do </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">S:=Solution(timei) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Solution parser: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sci0101:=rhs(S[2]) : sci0201:=rhs(S[3]) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Site-balance equation after solver: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sci0000:= 1.0 -sci0101 -sci0201 : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Reaction rates after solver: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srad0101:= kad0101d*CSLq0101*sci0000 -kad0101i*sci0101  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srad0201:= kad0201d*CSLq0201*sci0000 -kad0201i*sci0201  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srad0202:= kad0202d*sci0201*sci0000 -kad0202i*sci0101*sci0101  : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"><Font encoding="UTF-8">fprintf(filename1 ,&quot;%q %q\134n&quot;, &quot;Cu100&quot; , timei, T, CSLq0101, CSLq0201 , sci0000, sci0101, sci0201 , srad0101, srad0201, srad0202  ): </Font></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">FileTools[Flush](filename1) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">od: </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">close(filename1) : </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
+</Input>
+</Group>
+<Group labelreference="L84" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">filename1:=FileTools[Text][Open]( &quot;pH.xls&quot; ,create,overwrite) :</Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"><Font encoding="UTF-8">fprintf( filename1 ,&quot;%q %q\134n&quot;, &quot;P102&quot;, &quot;pH&quot;, &quot;</Font>C102&quot;, &quot;C103&quot;, &quot;C113&quot;, &quot;C123&quot; ):  </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">flush( filename1 ): </Text-field>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
 </Input>
 </Group>
-<Group labelreference="L66" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Group labelreference="L88" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
 <Input>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
 </Input>
 </Group>
-<Group labelreference="L67" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Group labelreference="L85" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Solubility of CO2 as function of pH: An approach to remove large masses of CO2 from the atmosphere.</Text-field>
+</Input>
+</Group>
+<Group labelreference="L89" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
 <Input>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
 </Input>
 </Group>
-<Group labelreference="L68" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Group labelreference="L90" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
 <Input>
-<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CLSCO2:=614E-6/0.017889149165169378; </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L78" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">P102:=1; # Pressure of CO2 in atm. </Text-field>
 </Input>
 <Output>
-<Text-field style="2D Output" layout="Maple Output"><Equation executable="false" style="2D Output" display="LUklbXJvd0c2Iy9JK21vZHVsZW5hbWVHNiJJLFR5cGVzZXR0aW5nR0koX3N5c2xpYkdGJzYoLUkjbWlHRiQ2JVEnQ0xTQ08yRicvJSdpdGFsaWNHUSV0cnVlRicvJSxtYXRodmFyaWFudEdRJ2l0YWxpY0YnLUkjbW9HRiQ2LVEjOj1GJy9GM1Enbm9ybWFsRicvJSZmZW5jZUdRJmZhbHNlRicvJSpzZXBhcmF0b3JHRj0vJSlzdHJldGNoeUdGPS8lKnN5bW1ldHJpY0dGPS8lKGxhcmdlb3BHRj0vJS5tb3ZhYmxlbGltaXRzR0Y9LyUnYWNjZW50R0Y9LyUnbHNwYWNlR1EsMC4yNzc3Nzc4ZW1GJy8lJ3JzcGFjZUdGTC1JI21uR0YkNiRRLTAuMDM0MzIyNDgyMEYnRjkvJStmb3JlZ3JvdW5kR1EoWzAsMCwwXUYnLyUpcmVhZG9ubHlHRj1GOQ==">JCJbcVZTSmFDTnV5RDg4Y2VkKlxBVzcoKXk6O0g9NltLN01ycCRweFpYaHAqZUgneXkpPltBViQhIygq</Equation></Text-field>
+<Text-field style="2D Output" layout="Maple Output"><Equation executable="false" style="2D Output" display="LUklbXJvd0c2Iy9JK21vZHVsZW5hbWVHNiJJLFR5cGVzZXR0aW5nR0koX3N5c2xpYkdGJzYoLUkjbWlHRiQ2JVElUDEwMkYnLyUnaXRhbGljR1EldHJ1ZUYnLyUsbWF0aHZhcmlhbnRHUSdpdGFsaWNGJy1JI21vR0YkNi1RIzo9RicvRjNRJ25vcm1hbEYnLyUmZmVuY2VHUSZmYWxzZUYnLyUqc2VwYXJhdG9yR0Y9LyUpc3RyZXRjaHlHRj0vJSpzeW1tZXRyaWNHRj0vJShsYXJnZW9wR0Y9LyUubW92YWJsZWxpbWl0c0dGPS8lJ2FjY2VudEdGPS8lJ2xzcGFjZUdRLDAuMjc3Nzc3OGVtRicvJSdyc3BhY2VHRkwtSSNtbkdGJDYkUSIxRidGOS8lK2ZvcmVncm91bmRHUShbMCwwLDBdRicvJSlyZWFkb25seUdGPUY5">IiIi</Equation></Text-field>
 </Output>
 </Group>
-<Group labelreference="L65" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Group labelreference="L79" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
 <Input>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
 </Input>
 </Group>
-<Group labelreference="L64" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Group labelreference="L86" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L80" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">for pH in [ 0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.9, 14.0 ] do</Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">C010:=evalf(10^(-pH)) : </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">eqa:=  P102=29.76*(C102+C123+C113+C103);eq0:=  C123=C102*1.2E-3 :  </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">eq0 := C123 = 0.12000000e-2*C102 :  </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">eq1:=  C113*C010=C123*2.5E-4 :  </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">eq2:=  C103*C010=C113*4.695E-11 : </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">S:=fsolve({eqa,eq0,eq1,eq2},{C102,C103,C113,C123}) :   </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">SC102:=rhs(S[1]) : SC103:=rhs(S[2]) : SC113:=rhs(S[3]) : SC123:=rhs(S[4]) : <Font encoding="UTF-8">
+
+
+
+fprintf( filename1 ,&quot;%q %q\134n&quot;, P102, pH, S</Font>C102, SC103, SC113, SC123) :  </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">flush( filename1 ): </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false"></Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false">od :     </Text-field>
+</Input>
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" alignment="left" firstindent="0" spacebelow="0" leftmargin="0" linespacing="0.0" initial="0" linebreak="space" rightmargin="0" bulletsuffix="" spaceabove="0" bullet="none" pagebreak-before="false"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L87" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L69" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">close(filename1); </Text-field>
+</Input>
+</Group>
+<Group labelreference="L75" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L70" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L74" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
 <Input>
 <Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
 </Input>
