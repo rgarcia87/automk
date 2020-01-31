@@ -30,10 +30,9 @@ itm=amklib.read('./itm.csv')
 rxn=amklib.read('./rxn.csv')
 #print('\n \n', int, '\n \n' , rxn, '\n \n')
 
-# Electrochemical part: Get electric potential; adjust potentials if in electrochem conditions. 
-elecpot=amklib.get_elecpot(conf) # Gets electric potential vs SHE (vs RHE in config file). 
+# Electrochemical part: Get electric potential and adjust the potentials. 
+elecpot=amklib.get_elecpot(conf) 
 if elecpot !=0 : 
-    get_nelect_for_rxn(conf,itm,rxn) 
     amklib.adjust_energy_with_potential(conf,itm,elecpot) 
     amklib.adjust_energy_with_potential(conf,rxn,elecpot) 
 

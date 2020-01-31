@@ -85,58 +85,26 @@ def get_damptime(conf) :
      
       
 def get_elecpot(conf) : 
-    """This function extracts the electric potential vs RHE from the configuration file. 
-    returns the electric potential vs SHE. 
+    """This function extracts the electric potential from the configuration file. 
     """
     try :  
-        elecpot=(float(conf['Electrochemistry']['electricpotentialrhe'])-
-                 float(conf['Electrochemistry']['pH'])*float(kbeV)*  
-                 float(conf['Reactor']['reactortemp'])*ln(10.0) ) 
+        elecpot=float(conf['Electrochemistry']['electricpotential'])
     except :  
         elecpot=0.0 
     return elecpot 
         
-    
-def get_nelect_for_itm(itm,item,label) : 
-    if item==None : 
-        nelect=0.0  
-    else : 
-        try : 
-            nelect=float(itm[item][label]) 
-        except : 
-            nelect=0.0 
-            print("Nasty problem found in ",item) 
-    return nelect
-       
-       
-def get_nelect_for_rxn(conf,itm,rxn) :  
-    """Get the number of electrons for a particular transition state
-    from alpha values
-    """ 
-    try :   
-        label=conf['Electrochemistry']['nelectronslabel']  
-    except :   
-        label="ne"  
-    for item in sorted(rxn) : 
-        rxn[item][label]=((1-float(rxn[item][alpha]))*(
-                          get_nelect_for_itm(itm,rxn[item]['is1'],label)+
-                          get_nelect_for_itm(itm,rxn[item]['is2'],label))+
-                          float(rxn[item][alpha])*(
-                          get_nelect_for_itm(itm,rxn[item]['fs1'],label)+
-                          get_nelect_for_itm(itm,rxn[item]['fs2'],label)))  
-          
       
 def adjust_energy_with_potential(conf,itm,elecpot) : 
     """Adds the electric potential component to the Gibbs energy. 
     """ 
     try :  
-        label=conf['Electrochemistry']['nelectronslabel']  
-    except :  
-        label="ne"  
-    for item in sorted(itm) :  
-        try :  
+        label=conf['Electrochemistry']['nelectronslabel'] 
+    except : 
+        label="ne" 
+    for item in sorted(itm) :
+        try : 
             itm[item]['G']=float(itm[item]['G'])+float(itm[item][label])*elecpot
-        except :   
+        except : 
             print("Error found adjusting the potential of ", item) 
             print(item)
             print(label) 
@@ -222,8 +190,7 @@ def process_intermediates(conf,itm,ltp) :
             ltp['prs'].append("CSL"+item)   
                   
         elif item!=conf['Catalyst']['sitebalancespecies'] : 
-            print("Unknown phase for ",item,itm[item]['phase'],
-                  "\n I only recognize 'aqu', 'cat', and 'gas'") 
+            print("Unknown phase for ",item," \n I only recognize 'aqu', 'cat', and 'gas'") 
             exit()
                                             
     # Close the site-balance equation     
