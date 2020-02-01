@@ -1,5 +1,6 @@
 #!/usr/bin/python3 
-# Created by Rodrigo García-Muelas 
+# -*- coding: utf-8 -*-
+# Created by Rodrigo Garcia-Muelas 
 # Rev.2020Jan28
 # 
 """This package generates the Input of microkinetic models for Maple.  
