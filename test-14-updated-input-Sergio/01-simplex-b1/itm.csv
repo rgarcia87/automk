@@ -1,5 +1,6 @@
 label   formula                            phase       G           mw   ne frq         
 g010101 proton                              gas       0.00000000   1.00  0 [] 
+g020101 dihydrogen-molecule                 gas       0.00000000   2.00  0 []      
 g011101 hydroxide                           gas       
 g021101 H2O                                 gas       0.00000000  18.00  2 []                  
 g102101 CO2                                 gas       0.00000000  44.00  0 []                  
