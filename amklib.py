@@ -171,7 +171,8 @@ def process_intermediates(conf,itm,ltp) :
     index=1  
     # Initialize list-to-print for postprocessing
     ltp['prs']=[] # ltp of pressures and concentrations-in-second-layer.     
-    ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
+    #ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
+    ltp['itm']=[conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species
       
     # Process intermediates, starting by adsorbed (cat), then gas. 
     for item in sorted(itm) :  
@@ -199,7 +200,7 @@ def process_intermediates(conf,itm,ltp) :
             rhsparse+="sc"+item+":=rhs(S["+str(index)+"]) : "
              
             # List of reactions for fprintf function in Maple 
-            ltp['itm'].append("sc"+item)
+            ltp['itm'].append(item)
               
         elif itm[item]['phase']=='gas' : 
             # Get partial pressures 
@@ -432,7 +433,7 @@ def process_rxn(conf,itm,rxn,ltp) :
         kinetic_constants(conf,itm,rxn,item)        
            
         # List of reactions for fprintf function in Maple 
-        ltp['rxn'].append("sr"+item)
+        ltp['rxn'].append(item)
            
     return itm, rxn 
         
