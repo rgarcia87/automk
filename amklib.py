@@ -459,7 +459,7 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp) :
     # Open file and print labels
     print('filename1:=FileTools[Text][Open]("',
           conf['General']['mapleoutput'].replace('"','').replace("'","").replace(" ",""),
-          '",create,overwrite) : ') # Remove " ' and spaces from name of files. 
+          '",create,overwrite) : ',sep='') # Remove " ' and spaces from name of files. 
     print('fprintf(filename1,"%q %q\\n",','catalyst, "timei", "T",', 
           ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
           ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
