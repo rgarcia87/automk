@@ -171,8 +171,8 @@ def process_intermediates(conf,itm,ltp) :
     index=1  
     # Initialize list-to-print for postprocessing
     ltp['prs']=[] # ltp of pressures and concentrations-in-second-layer.     
-    #ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
-    ltp['itm']=[conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species
+    ltp['itm']=["sc"+conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species     
+    #ltp['itm']=[conf['Catalyst']['sitebalancespecies']] # ltp of interm.: init w/ s-b species
       
     # Process intermediates, starting by adsorbed (cat), then gas. 
     for item in sorted(itm) :  
@@ -200,7 +200,7 @@ def process_intermediates(conf,itm,ltp) :
             rhsparse+="sc"+item+":=rhs(S["+str(index)+"]) : "
              
             # List of reactions for fprintf function in Maple 
-            ltp['itm'].append(item)
+            ltp['itm'].append("sc"+item)
               
         elif itm[item]['phase']=='gas' : 
             # Get partial pressures 
@@ -433,7 +433,7 @@ def process_rxn(conf,itm,rxn,ltp) :
         kinetic_constants(conf,itm,rxn,item)        
            
         # List of reactions for fprintf function in Maple 
-        ltp['rxn'].append(item)
+        ltp['rxn'].append('sr'+item)
            
     return itm, rxn 
         
@@ -462,8 +462,8 @@ def printtxt(conf,itm,rxn,sbalance,initialc,sodesolv,rhsparse,ltp) :
           '",create,overwrite) : ',sep='') # Remove " ' and spaces from name of files. 
     print('fprintf(filename1,"%q %q\\n",','catalyst, "timei", "T",', 
           ', '.join(['"'+item+'"' for item in ltp['prs']]) ,",", 
-          ', '.join(['"'+item+'"' for item in ltp['itm']]) ,",",
-          ', '.join(['"'+item+'"' for item in ltp['rxn']]) ,   
+          ', '.join(['"'+item[2:]+'"' for item in ltp['itm']]) ,",",
+          ', '.join(['"'+item[2:]+'"' for item in ltp['rxn']]) ,   
           " ): " )   
     print('FileTools[Flush](filename1) : \n ')  
       
