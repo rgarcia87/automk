@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Worksheet>
+<Version major="2015" minor="1"/>
+<Label-Scheme value="2" prefix=""/>
+<View-Properties presentation="false" autoexpanding_sections="true" UserProfileName="Maple Default Profile" NumericFormat-ApplyInteger="true" NumericFormat-ApplyRational="true" NumericFormat-ApplyExponent="false">
+</View-Properties>
+<MapleNet-Properties elisiondigitsbefore="100" labelling="true" indentamount="4" elisiontermsthreshold="infinity" ansi="false" errorbreak="1" useclientjvm="true" echo="1" imaginaryunit="I" labelwidth="20" unitattributes="&quot;fontweight&quot; = &quot;bold&quot;" contextmenusize="automatic" plotdriver="opengl" elisiondigitsafter="100" plotoutput="terminal" helpbrowser="standard" rtablesize="10" elisiontermsbefore="100" elisiondigitsthreshold="infinity" typesetting="standard" plotdevice="inline" verboseproc="1" showassumed="1" quiet="false" errorcursor="false" longdelim="true" plotoptions="" elisiontermsafter="100" screenwidth="79" preplot="" prettyprint="3" displayprecision="10" screenpixelheight="1135" warnlevel="3" screenheight="25" latexwidth="8.0" postplot="" prompt="&gt; " ShowLabels="true"/>
+<Styles>
+<Font name="Ordered List 1" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Annotation Text" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Ordered List 2" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Ordered List 3" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Ordered List 4" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Ordered List 5" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Author" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Annotation Title" background="[255,255,255]" bold="true" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="18" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Warning" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[0,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Caption Reference" background="[255,255,255]" bold="true" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Maple Input Placeholder" background="[255,255,255]" bold="true" executable="true" family="Monospaced" foreground="[200,0,200]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="true"/>
+<Font name="Maple Plot" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Code" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[255,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Line Printed Output" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[0,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Text Output" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[0,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Diagnostic" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[40,120,40]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="2D Inert Output" background="[255,255,255]" bold="false" executable="true" family="Times New Roman" foreground="[144,144,144]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Normal" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Hyperlink" background="[255,255,255]" bold="false" executable="false" family="Serif" foreground="[0,128,128]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="true" placeholder="false"/>
+<Font name="Maple Output" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Dash Item" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="2D Math" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Maple Input" background="[255,255,255]" bold="true" executable="true" family="Monospaced" foreground="[255,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="2D Output" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="2D Input" background="[255,255,255]" bold="false" executable="true" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="HyperlinkError" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[255,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="true" placeholder="false"/>
+<Font name="Header and Footer" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="10" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Error" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[255,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Title" background="[255,255,255]" bold="true" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="18" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Heading 1" background="[255,255,255]" bold="true" executable="false" family="Serif" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="18" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Text" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Bullet Item" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Heading 4" background="[255,255,255]" bold="false" executable="false" family="Serif" foreground="[0,0,0]" italic="true" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Equation Label" background="[255,255,255]" bold="true" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Heading 3" background="[255,255,255]" bold="true" executable="false" family="Serif" foreground="[0,0,0]" italic="true" opaque="false" readonly="false" size="14" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Heading 2" background="[255,255,255]" bold="true" executable="false" family="Serif" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="16" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="HyperlinkWarning" background="[255,255,255]" bold="false" executable="false" family="Monospaced" foreground="[0,0,255]" italic="false" opaque="false" readonly="true" size="12" subscript="false" superscript="false" underline="true" placeholder="false"/>
+<Font name="Dictionary Hyperlink" background="[255,255,255]" bold="false" executable="false" family="Serif" foreground="[147,0,15]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="true" placeholder="false"/>
+<Font name="Atomic Variable" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[175,0,175]" italic="true" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="Caption Text" background="[255,255,255]" bold="true" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Font name="List Item" background="[255,255,255]" bold="false" executable="false" family="Times New Roman" foreground="[0,0,0]" italic="false" opaque="false" readonly="false" size="12" subscript="false" superscript="false" underline="false" placeholder="false"/>
+<Layout name="Ordered List 1" alignment="left" bullet="numeric" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="-1" bulletsuffix=""/>
+<Layout name="Ordered List 2" alignment="left" bullet="alphabetic" firstindent="0" leftmargin="36" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="-1" bulletsuffix=""/>
+<Layout name="Ordered List 3" alignment="left" bullet="roman" firstindent="0" leftmargin="72" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="-1" bulletsuffix=""/>
+<Layout name="Ordered List 4" alignment="left" bullet="ALPHABETIC" firstindent="0" leftmargin="108" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="-1" bulletsuffix=""/>
+<Layout name="Ordered List 5" alignment="left" bullet="ROMAN" firstindent="0" leftmargin="144" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="-1" bulletsuffix=""/>
+<Layout name="Author" alignment="centred" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="8" spacebelow="8" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Warning" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Annotation Title" alignment="centred" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="12" spacebelow="12" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Maple Plot" alignment="centred" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Line Printed Output" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="any" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Text Output" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="newline" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Diagnostic" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="any" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Normal" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Maple Output" alignment="centred" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.3" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Dash Item" alignment="left" bullet="dash" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="HyperlinkError" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Error" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Title" alignment="centred" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="12" spacebelow="12" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Heading 1" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="8" spacebelow="4" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Bullet Item" alignment="left" bullet="dot" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Heading 4" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Heading 3" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="Heading 2" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="8" spacebelow="2" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="HyperlinkWarning" alignment="left" bullet="none" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="0" spacebelow="0" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Layout name="List Item" alignment="left" bullet="indent" firstindent="0" leftmargin="0" rightmargin="0" linespacing="0.0" spaceabove="3" spacebelow="3" linebreak="space" pagebreak-before="false" initial="0" bulletsuffix=""/>
+<Pencil-style name="Pencil 5" pen-color="[255,0,0]" pen-height="5.0" pen-width="5.0" pen-opacity="1.0"/>
+<Pencil-style name="Pencil 4" pen-color="[0,0,255]" pen-height="3.0" pen-width="3.0" pen-opacity="1.0"/>
+<Pencil-style name="Pencil 3" pen-color="[0,0,0]" pen-height="3.0" pen-width="3.0" pen-opacity="1.0"/>
+<Pencil-style name="Pencil 2" pen-color="[0,0,255]" pen-height="1.0" pen-width="1.0" pen-opacity="1.0"/>
+<Pencil-style name="Pencil 1" pen-color="[0,0,0]" pen-height="1.0" pen-width="1.0" pen-opacity="1.0"/>
+<Highlighter-style name="Highlighter 2" pen-color="[255,204,0]" pen-height="14.0" pen-width="14.0" pen-opacity="0.8"/>
+<Highlighter-style name="Highlighter 1" pen-color="[255,153,255]" pen-height="12.0" pen-width="8.0" pen-opacity="0.8"/>
+<Highlighter-style name="Highlighter 4" pen-color="[0,255,255]" pen-height="32.0" pen-width="32.0" pen-opacity="0.8"/>
+<Highlighter-style name="Highlighter 3" pen-color="[51,255,0]" pen-height="24.0" pen-width="24.0" pen-opacity="0.8"/>
+<Highlighter-style name="Highlighter 5" pen-color="[255,255,0]" pen-height="48.0" pen-width="48.0" pen-opacity="0.8"/>
+</Styles>
+<Startup-Code startupcode=""/>
+<Task-table>
+    <Task-category name="&lt;default&gt;"/>
+</Task-table>
+<Task/>
+<Group labelreference="L73" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Heading </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">restart : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">filename1:=FileTools[Text][Open](&quot;Cu111HE1402.xls&quot;,create,overwrite) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"><Font encoding="UTF-8">fprintf(filename1,&quot;%q %q\134n&quot;, catalyst, &quot;timei&quot;, &quot;T&quot;, &quot;CSLg010101&quot;, &quot;CSLg011101&quot;, &quot;CSLg020101&quot;, &quot;CSLg021101&quot;, &quot;CSLg102101&quot;, &quot;CSLg121101&quot;, &quot;CSLg122101&quot;, &quot;CSLg140101&quot;, &quot;CSLg141101&quot; , &quot;i000000&quot;, &quot;i001101&quot;, &quot;i010101&quot;, &quot;i011101&quot;, &quot;i020101&quot;, &quot;i021101&quot;, &quot;i100101&quot;, &quot;i101101&quot;, &quot;i102101&quot;, &quot;i110101&quot;, &quot;i111101&quot;, &quot;i111102&quot;, &quot;i112102&quot;, &quot;i120101&quot;, &quot;i121101&quot;, &quot;i121102&quot;, &quot;i122101&quot;, &quot;i130101&quot;, &quot;i131101&quot;, &quot;i131102&quot;, &quot;i140101&quot;, &quot;i141101&quot; , &quot;adsg010101&quot;, &quot;adsg020101&quot;, &quot;adsg020102&quot;, &quot;adsg021101&quot;, &quot;adsg102101&quot;, &quot;adsg121101&quot;, &quot;adsg122101&quot;, &quot;adsg140101&quot;, &quot;adsg141101&quot;, &quot;aqu0010001&quot;, &quot;aqu0010002&quot;, &quot;aqu0010003&quot;, &quot;aqu0010004&quot;, &quot;aqu0010005&quot;, &quot;aqu0010006&quot;, &quot;aqu0010007&quot;, &quot;aqu0010008&quot;, &quot;aqu0010009&quot;, &quot;aqu0010010&quot;, &quot;aqu0010011&quot;, &quot;aqu0010012&quot;, &quot;aqu0010013&quot;, &quot;aqu0010014&quot;, &quot;rxn0000001&quot;, &quot;rxn0000002&quot;, &quot;rxn0000003&quot;, &quot;rxn0000004&quot;, &quot;rxn0000005&quot;, &quot;rxn0000006&quot;, &quot;rxn0000007&quot;, &quot;rxn0000008&quot;, &quot;rxn0000009&quot;, &quot;rxn0000010&quot;, &quot;rxn0000011&quot;, &quot;rxn0000012&quot;, &quot;rxn0000013&quot;, &quot;rxn0000014&quot;, &quot;rxn0000015&quot;, &quot;rxn0000016&quot;, &quot;rxn0000017&quot;, &quot;rxn0000018&quot;, &quot;rxn0000019&quot;, &quot;rxn0000020&quot;, &quot;rxn0000021&quot;, &quot;rxn0000022&quot;, &quot;rxn0000023&quot;, &quot;rxn0000024&quot;, &quot;rxn0000025&quot;, &quot;rxn0000026&quot;, &quot;rxn0000027&quot;, &quot;rxn0000028&quot;, &quot;rxn0000029&quot;, &quot;rxn0000030&quot;, &quot;rxn0000031&quot;  ): </Font></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">FileTools[Flush](filename1) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">T:= 300  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg010101:= 0.017889149165169378  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg011101:= 1.7889149165169375e-16  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg020101:= 1.3416861873877034e-05  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg021101:= 0.0  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg102101:= 0.00017889149165169375  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg121101:= 0.0  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg122101:= 0.0  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg140101:= 0.0  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">CSLg141101:= 0.0  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Kinetic constants</Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg010101d:=evalf(20836612225.1252*T*exp(-max(0.0,3.374683,-0.190831)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg010101i:=evalf(20836612225.1252*T*exp(-max(0.0,3.565514,0.190831)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg020101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,0.000000)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg020101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.000000)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg020102d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.463658)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg020102i:=evalf(20836612225.1252*T*exp(-max(0.0,0.463658,0.463658)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg021101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.325187)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg021101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.325187,0.325187)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg102101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,0.155440)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg102101i:=evalf(20836612225.1252*T*exp(-max(0.0,-0.155440,-0.155440)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg121101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.667868)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg121101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.667868,0.667868)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg122101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.408135)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg122101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.408135,0.408135)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg140101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.092150)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg140101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.092150,0.092150)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg141101d:=evalf(20836612225.1252*T*exp(-max(0.0,0.000000,-0.409819)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kadsg141101i:=evalf(20836612225.1252*T*exp(-max(0.0,0.409819,0.409819)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010001d:=evalf(20836612225.1252*T*exp(-max(0.0,0.722700,0.672700)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010001i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.672700)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010002d:=evalf(20836612225.1252*T*exp(-max(0.0,0.184356,0.134356)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010002i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.134356)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010003d:=evalf(20836612225.1252*T*exp(-max(0.0,0.203902,0.153902)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010003i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.153902)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010004d:=evalf(20836612225.1252*T*exp(-max(0.0,0.143478,0.093478)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010004i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.093478)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010005d:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.578239)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010005i:=evalf(20836612225.1252*T*exp(-max(0.0,0.628239,0.578239)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010006d:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.079231)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010006i:=evalf(20836612225.1252*T*exp(-max(0.0,0.129231,0.079231)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010007d:=evalf(20836612225.1252*T*exp(-max(0.0,0.388718,0.338718)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010007i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.338718)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010008d:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.564413)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010008i:=evalf(20836612225.1252*T*exp(-max(0.0,0.614413,0.564413)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010009d:=evalf(20836612225.1252*T*exp(-max(0.0,0.088860,0.038860)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010009i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.038860)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010010d:=evalf(20836612225.1252*T*exp(-max(0.0,0.751485,0.701485)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010010i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.701485)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010011d:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.076307)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010011i:=evalf(20836612225.1252*T*exp(-max(0.0,0.126307,0.076307)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010012d:=evalf(20836612225.1252*T*exp(-max(0.0,0.118757,0.068757)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010012i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.068757)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010013d:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.006298)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010013i:=evalf(20836612225.1252*T*exp(-max(0.0,0.056298,0.006298)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010014d:=evalf(20836612225.1252*T*exp(-max(0.0,0.307192,0.257192)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">kaqu0010014i:=evalf(20836612225.1252*T*exp(-max(0.0,0.050000,-0.257192)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000001d:=evalf(20836612225.1252*T*exp(-max(0.0,1.077929,0.481869)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000001i:=evalf(20836612225.1252*T*exp(-max(0.0,0.596060,-0.481869)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000002d:=evalf(20836612225.1252*T*exp(-max(0.0,0.875598,-0.036929)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000002i:=evalf(20836612225.1252*T*exp(-max(0.0,0.912527,0.036929)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000003d:=evalf(20836612225.1252*T*exp(-max(0.0,2.413132,1.173132)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000003i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,-1.173132)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000004d:=evalf(20836612225.1252*T*exp(-max(0.0,1.323466,0.083466)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000004i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,-0.083466)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000005d:=evalf(20836612225.1252*T*exp(-max(0.0,1.249236,0.697201)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000005i:=evalf(20836612225.1252*T*exp(-max(0.0,0.552036,-0.697201)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000006d:=evalf(20836612225.1252*T*exp(-max(0.0,0.445993,-0.577790)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000006i:=evalf(20836612225.1252*T*exp(-max(0.0,1.023782,0.577790)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000007d:=evalf(20836612225.1252*T*exp(-max(0.0,1.138142,-0.101858)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000007i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,0.101858)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000008d:=evalf(20836612225.1252*T*exp(-max(0.0,1.402193,-0.077807)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000008i:=evalf(20836612225.1252*T*exp(-max(0.0,1.480000,0.077807)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000009d:=evalf(20836612225.1252*T*exp(-max(0.0,0.590063,-0.769070)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000009i:=evalf(20836612225.1252*T*exp(-max(0.0,1.359133,0.769070)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000010d:=evalf(20836612225.1252*T*exp(-max(0.0,1.229484,-0.250516)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000010i:=evalf(20836612225.1252*T*exp(-max(0.0,1.480000,0.250516)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000011d:=evalf(20836612225.1252*T*exp(-max(0.0,0.947676,0.147887)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000011i:=evalf(20836612225.1252*T*exp(-max(0.0,0.799789,-0.147887)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000012d:=evalf(20836612225.1252*T*exp(-max(0.0,2.240423,1.000423)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000012i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,-1.000423)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000013d:=evalf(20836612225.1252*T*exp(-max(0.0,0.815432,0.008622)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000013i:=evalf(20836612225.1252*T*exp(-max(0.0,0.806810,-0.008622)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000014d:=evalf(20836612225.1252*T*exp(-max(0.0,1.104104,0.466831)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000014i:=evalf(20836612225.1252*T*exp(-max(0.0,0.637273,-0.466831)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000015d:=evalf(20836612225.1252*T*exp(-max(0.0,1.596351,0.356351)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000015i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,-0.356351)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000016d:=evalf(20836612225.1252*T*exp(-max(0.0,0.744302,-0.735698)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000016i:=evalf(20836612225.1252*T*exp(-max(0.0,1.480000,0.735698)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000017d:=evalf(20836612225.1252*T*exp(-max(0.0,0.830732,-0.151970)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000017i:=evalf(20836612225.1252*T*exp(-max(0.0,0.982702,0.151970)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000018d:=evalf(20836612225.1252*T*exp(-max(0.0,0.834765,0.039310)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000018i:=evalf(20836612225.1252*T*exp(-max(0.0,0.795455,-0.039310)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000019d:=evalf(20836612225.1252*T*exp(-max(0.0,2.010200,0.530200)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000019i:=evalf(20836612225.1252*T*exp(-max(0.0,1.480000,-0.530200)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000020d:=evalf(20836612225.1252*T*exp(-max(0.0,0.937844,0.202926)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000020i:=evalf(20836612225.1252*T*exp(-max(0.0,0.734917,-0.202926)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000021d:=evalf(20836612225.1252*T*exp(-max(0.0,2.404040,1.164040)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000021i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,-1.164040)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000022d:=evalf(20836612225.1252*T*exp(-max(0.0,1.279789,0.745697)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000022i:=evalf(20836612225.1252*T*exp(-max(0.0,0.534092,-0.745697)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000023d:=evalf(20836612225.1252*T*exp(-max(0.0,1.205181,0.627271)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000023i:=evalf(20836612225.1252*T*exp(-max(0.0,0.577910,-0.627271)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000024d:=evalf(20836612225.1252*T*exp(-max(0.0,1.477925,0.237925)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000024i:=evalf(20836612225.1252*T*exp(-max(0.0,1.240000,-0.237925)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000025d:=evalf(20836612225.1252*T*exp(-max(0.0,1.232408,-0.247592)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000025i:=evalf(20836612225.1252*T*exp(-max(0.0,1.480000,0.247592)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000026d:=evalf(20836612225.1252*T*exp(-max(0.0,0.842391,-0.122074)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000026i:=evalf(20836612225.1252*T*exp(-max(0.0,0.964465,0.122074)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000027d:=evalf(20836612225.1252*T*exp(-max(0.0,1.122938,0.496727)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000027i:=evalf(20836612225.1252*T*exp(-max(0.0,0.626211,-0.496727)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000028d:=evalf(20836612225.1252*T*exp(-max(0.0,1.284652,0.753415)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000028i:=evalf(20836612225.1252*T*exp(-max(0.0,0.531236,-0.753415)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000029d:=evalf(20836612225.1252*T*exp(-max(0.0,1.302417,-0.177583)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000029i:=evalf(20836612225.1252*T*exp(-max(0.0,1.480000,0.177583)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000030d:=evalf(20836612225.1252*T*exp(-max(0.0,0.915881,0.066361)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000030i:=evalf(20836612225.1252*T*exp(-max(0.0,0.849520,-0.066361)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000031d:=evalf(20836612225.1252*T*exp(-max(0.0,1.323895,0.815706)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">krxn0000031i:=evalf(20836612225.1252*T*exp(-max(0.0,0.508189,-0.815706)/(8.617333262145E-5*T)) ) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Reaction rates:</Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg010101:=(t)-&gt; kadsg010101d*CSLg010101*ci000000(t) -kadsg010101i*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg020101:=(t)-&gt; kadsg020101d*CSLg020101*ci000000(t) -kadsg020101i*ci020101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg020102:=(t)-&gt; kadsg020102d*ci020101(t)*ci000000(t) -kadsg020102i*ci010101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg021101:=(t)-&gt; kadsg021101d*CSLg021101*ci000000(t) -kadsg021101i*ci021101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg102101:=(t)-&gt; kadsg102101d*CSLg102101*ci000000(t) -kadsg102101i*ci102101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg121101:=(t)-&gt; kadsg121101d*CSLg121101*ci000000(t) -kadsg121101i*ci121101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg122101:=(t)-&gt; kadsg122101d*CSLg122101*ci000000(t) -kadsg122101i*ci122101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg140101:=(t)-&gt; kadsg140101d*CSLg140101*ci000000(t) -kadsg140101i*ci140101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">radsg141101:=(t)-&gt; kadsg141101d*CSLg141101*ci000000(t) -kadsg141101i*ci141101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010001:=(t)-&gt; kaqu0010001d*ci011101(t) -kaqu0010001i*ci001101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010002:=(t)-&gt; kaqu0010002d*ci021101(t)*CSLg010101 -kaqu0010002i*CSLg021101*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010003:=(t)-&gt; kaqu0010003d*ci021101(t) -kaqu0010003i*ci011101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010004:=(t)-&gt; kaqu0010004d*ci111102(t)*CSLg010101 -kaqu0010004i*CSLg021101*ci100101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010005:=(t)-&gt; kaqu0010005d*ci111102(t) -kaqu0010005i*ci101101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010006:=(t)-&gt; kaqu0010006d*ci112102(t)*CSLg010101 -kaqu0010006i*CSLg021101*ci101101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010007:=(t)-&gt; kaqu0010007d*ci112102(t) -kaqu0010007i*ci102101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010008:=(t)-&gt; kaqu0010008d*ci121102(t)*CSLg010101 -kaqu0010008i*CSLg021101*ci110101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010009:=(t)-&gt; kaqu0010009d*ci121102(t) -kaqu0010009i*ci111101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010010:=(t)-&gt; kaqu0010010d*ci122101(t)*CSLg010101 -kaqu0010010i*CSLg021101*ci111101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010011:=(t)-&gt; kaqu0010011d*ci131102(t)*CSLg010101 -kaqu0010011i*ci120101(t)*CSLg021101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010012:=(t)-&gt; kaqu0010012d*ci131102(t) -kaqu0010012i*ci121101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010013:=(t)-&gt; kaqu0010013d*ci141101(t)*CSLg010101 -kaqu0010013i*ci130101(t)*CSLg021101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">raqu0010014:=(t)-&gt; kaqu0010014d*ci141101(t) -kaqu0010014i*ci131101(t)*CSLg010101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000001:=(t)-&gt; krxn0000001d*ci011101(t)*ci000000(t) -krxn0000001i*ci001101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000002:=(t)-&gt; krxn0000002d*ci021101(t)*ci000000(t) -krxn0000002i*ci011101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000003:=(t)-&gt; krxn0000003d*ci101101(t)*ci000000(t) -krxn0000003i*ci001101(t)*ci100101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000004:=(t)-&gt; krxn0000004d*ci102101(t)*ci000000(t) -krxn0000004i*ci101101(t)*ci001101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000005:=(t)-&gt; krxn0000005d*ci110101(t)*ci000000(t) -krxn0000005i*ci100101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000006:=(t)-&gt; krxn0000006d*ci111101(t)*ci000000(t) -krxn0000006i*ci101101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000007:=(t)-&gt; krxn0000007d*ci111101(t)*ci000000(t) -krxn0000007i*ci110101(t)*ci001101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000008:=(t)-&gt; krxn0000008d*ci111102(t)*ci000000(t) -krxn0000008i*ci011101(t)*ci100101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000009:=(t)-&gt; krxn0000009d*ci111102(t)*ci000000(t) -krxn0000009i*ci101101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000010:=(t)-&gt; krxn0000010d*ci112102(t)*ci000000(t) -krxn0000010i*ci011101(t)*ci101101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000011:=(t)-&gt; krxn0000011d*ci112102(t)*ci000000(t) -krxn0000011i*ci102101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000012:=(t)-&gt; krxn0000012d*ci112102(t)*ci000000(t) -krxn0000012i*ci111102(t)*ci001101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000013:=(t)-&gt; krxn0000013d*ci120101(t)*ci000000(t) -krxn0000013i*ci110101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000014:=(t)-&gt; krxn0000014d*ci121101(t)*ci000000(t) -krxn0000014i*ci111101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000015:=(t)-&gt; krxn0000015d*ci121101(t)*ci000000(t) -krxn0000015i*ci120101(t)*ci001101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000016:=(t)-&gt; krxn0000016d*ci121102(t)*ci000000(t) -krxn0000016i*ci011101(t)*ci110101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000017:=(t)-&gt; krxn0000017d*ci121102(t)*ci000000(t) -krxn0000017i*ci111101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000018:=(t)-&gt; krxn0000018d*ci121102(t)*ci000000(t) -krxn0000018i*ci111102(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000019:=(t)-&gt; krxn0000019d*ci122101(t)*ci000000(t) -krxn0000019i*ci111101(t)*ci011101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000020:=(t)-&gt; krxn0000020d*ci122101(t)*ci000000(t) -krxn0000020i*ci112102(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000021:=(t)-&gt; krxn0000021d*ci122101(t)*ci000000(t) -krxn0000021i*ci121102(t)*ci001101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000022:=(t)-&gt; krxn0000022d*ci130101(t)*ci000000(t) -krxn0000022i*ci120101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000023:=(t)-&gt; krxn0000023d*ci131101(t)*ci000000(t) -krxn0000023i*ci121101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000024:=(t)-&gt; krxn0000024d*ci131101(t)*ci000000(t) -krxn0000024i*ci130101(t)*ci001101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000025:=(t)-&gt; krxn0000025d*ci131102(t)*ci000000(t) -krxn0000025i*ci120101(t)*ci011101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000026:=(t)-&gt; krxn0000026d*ci131102(t)*ci000000(t) -krxn0000026i*ci121101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000027:=(t)-&gt; krxn0000027d*ci131102(t)*ci000000(t) -krxn0000027i*ci121102(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000028:=(t)-&gt; krxn0000028d*ci140101(t)*ci000000(t) -krxn0000028i*ci130101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000029:=(t)-&gt; krxn0000029d*ci141101(t)*ci000000(t) -krxn0000029i*ci130101(t)*ci011101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000030:=(t)-&gt; krxn0000030d*ci141101(t)*ci000000(t) -krxn0000030i*ci131101(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">rrxn0000031:=(t)-&gt; krxn0000031d*ci141101(t)*ci000000(t) -krxn0000031i*ci131102(t)*ci010101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Site-balance equation: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">ci000000:=(t)-&gt; 1.0 -ci001101(t) -ci010101(t) -ci011101(t) -ci020101(t) -ci021101(t) -ci100101(t) -ci101101(t) -ci102101(t) -ci110101(t) -ci111101(t) -ci111102(t) -ci112102(t) -ci120101(t) -ci121101(t) -ci121102(t) -ci122101(t) -ci130101(t) -ci131101(t) -ci131102(t) -ci140101(t) -ci141101(t) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Differential equations: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi001101:=diff(ci001101(t),t)=+raqu0010001(t)+rrxn0000001(t)+rrxn0000003(t)+rrxn0000004(t)+rrxn0000007(t)+rrxn0000012(t)+rrxn0000015(t)+rrxn0000021(t)+rrxn0000024(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi010101:=diff(ci010101(t),t)=+radsg010101(t)+radsg020102(t)+radsg020102(t)+raqu0010002(t)+rrxn0000001(t)+rrxn0000002(t)+rrxn0000005(t)+rrxn0000006(t)+rrxn0000009(t)+rrxn0000011(t)+rrxn0000013(t)+rrxn0000014(t)+rrxn0000017(t)+rrxn0000018(t)+rrxn0000020(t)+rrxn0000022(t)+rrxn0000023(t)+rrxn0000026(t)+rrxn0000027(t)+rrxn0000028(t)+rrxn0000030(t)+rrxn0000031(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi011101:=diff(ci011101(t),t)=-raqu0010001(t)+raqu0010003(t)-rrxn0000001(t)+rrxn0000002(t)+rrxn0000008(t)+rrxn0000010(t)+rrxn0000016(t)+rrxn0000019(t)+rrxn0000025(t)+rrxn0000029(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi020101:=diff(ci020101(t),t)=+radsg020101(t)-radsg020102(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi021101:=diff(ci021101(t),t)=+radsg021101(t)-raqu0010002(t)-raqu0010003(t)-rrxn0000002(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi100101:=diff(ci100101(t),t)=+raqu0010004(t)+rrxn0000003(t)+rrxn0000005(t)+rrxn0000008(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi101101:=diff(ci101101(t),t)=+raqu0010005(t)+raqu0010006(t)-rrxn0000003(t)+rrxn0000004(t)+rrxn0000006(t)+rrxn0000009(t)+rrxn0000010(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi102101:=diff(ci102101(t),t)=+radsg102101(t)+raqu0010007(t)-rrxn0000004(t)+rrxn0000011(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi110101:=diff(ci110101(t),t)=+raqu0010008(t)-rrxn0000005(t)+rrxn0000007(t)+rrxn0000013(t)+rrxn0000016(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi111101:=diff(ci111101(t),t)=+raqu0010009(t)+raqu0010010(t)-rrxn0000006(t)-rrxn0000007(t)+rrxn0000014(t)+rrxn0000017(t)+rrxn0000019(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi111102:=diff(ci111102(t),t)=-raqu0010004(t)-raqu0010005(t)-rrxn0000008(t)-rrxn0000009(t)+rrxn0000012(t)+rrxn0000018(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi112102:=diff(ci112102(t),t)=-raqu0010006(t)-raqu0010007(t)-rrxn0000010(t)-rrxn0000011(t)-rrxn0000012(t)+rrxn0000020(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi120101:=diff(ci120101(t),t)=+raqu0010011(t)-rrxn0000013(t)+rrxn0000015(t)+rrxn0000022(t)+rrxn0000025(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi121101:=diff(ci121101(t),t)=+radsg121101(t)+raqu0010012(t)-rrxn0000014(t)-rrxn0000015(t)+rrxn0000023(t)+rrxn0000026(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi121102:=diff(ci121102(t),t)=-raqu0010008(t)-raqu0010009(t)-rrxn0000016(t)-rrxn0000017(t)-rrxn0000018(t)+rrxn0000021(t)+rrxn0000027(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi122101:=diff(ci122101(t),t)=+radsg122101(t)-raqu0010010(t)-rrxn0000019(t)-rrxn0000020(t)-rrxn0000021(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi130101:=diff(ci130101(t),t)=+raqu0010013(t)-rrxn0000022(t)+rrxn0000024(t)+rrxn0000028(t)+rrxn0000029(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi131101:=diff(ci131101(t),t)=+raqu0010014(t)-rrxn0000023(t)-rrxn0000024(t)+rrxn0000030(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi131102:=diff(ci131102(t),t)=-raqu0010011(t)-raqu0010012(t)-rrxn0000025(t)-rrxn0000026(t)-rrxn0000027(t)+rrxn0000031(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi140101:=diff(ci140101(t),t)=+radsg140101(t)-rrxn0000028(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">eqdi141101:=diff(ci141101(t),t)=+radsg141101(t)-raqu0010013(t)-raqu0010014(t)-rrxn0000029(t)-rrxn0000030(t)-rrxn0000031(t)  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L72" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L71" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L70" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L69" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L68" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L67" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Initial conditions: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">IC0:= ci001101(0.0)=0.0, ci010101(0.0)=0.0, ci011101(0.0)=0.0, ci020101(0.0)=0.0, ci021101(0.0)=0.0, ci100101(0.0)=0.0, ci101101(0.0)=0.0, ci102101(0.0)=0.0, ci110101(0.0)=0.0, ci111101(0.0)=0.0, ci111102(0.0)=0.0, ci112102(0.0)=0.0, ci120101(0.0)=0.0, ci121101(0.0)=0.0, ci121102(0.0)=0.0, ci122101(0.0)=0.0, ci130101(0.0)=0.0, ci131101(0.0)=0.0, ci131102(0.0)=0.0, ci140101(0.0)=0.0, ci141101(0.0)=0.0 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L66" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L65" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># SODE Solver: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">Solution:=dsolve({eqdi001101, eqdi010101, eqdi011101, eqdi020101, eqdi021101, eqdi100101, eqdi101101, eqdi102101, eqdi110101, eqdi111101, eqdi111102, eqdi112102, eqdi120101, eqdi121101, eqdi121102, eqdi122101, eqdi130101, eqdi131101, eqdi131102, eqdi140101, eqdi141101, IC0}, numeric, method=rosenbrock, maxfun=0, abserr=1E-16, interr=false);</Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L64" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+<Group labelreference="L63" drawlabel="true" applyint="true" applyrational="true" applyexponent="false">
+<Input>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">for timei in [1e-15, 1e-12, 1e-09, 1e-06, 0.001, 1.0, 1000000.0, 1000000.0, 1000000000.0, 1000000000000.0] do </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">S:=Solution(timei) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Solution parser: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sci001101:=rhs(S[2]) : sci010101:=rhs(S[3]) : sci011101:=rhs(S[4]) : sci020101:=rhs(S[5]) : sci021101:=rhs(S[6]) : sci100101:=rhs(S[7]) : sci101101:=rhs(S[8]) : sci102101:=rhs(S[9]) : sci110101:=rhs(S[10]) : sci111101:=rhs(S[11]) : sci111102:=rhs(S[12]) : sci112102:=rhs(S[13]) : sci120101:=rhs(S[14]) : sci121101:=rhs(S[15]) : sci121102:=rhs(S[16]) : sci122101:=rhs(S[17]) : sci130101:=rhs(S[18]) : sci131101:=rhs(S[19]) : sci131102:=rhs(S[20]) : sci140101:=rhs(S[21]) : sci141101:=rhs(S[22]) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Site-balance equation after solver: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sci000000:= 1.0 -sci001101 -sci010101 -sci011101 -sci020101 -sci021101 -sci100101 -sci101101 -sci102101 -sci110101 -sci111101 -sci111102 -sci112102 -sci120101 -sci121101 -sci121102 -sci122101 -sci130101 -sci131101 -sci131102 -sci140101 -sci141101 : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"># Reaction rates after solver: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg010101:= kadsg010101d*CSLg010101*sci000000 -kadsg010101i*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg020101:= kadsg020101d*CSLg020101*sci000000 -kadsg020101i*sci020101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg020102:= kadsg020102d*sci020101*sci000000 -kadsg020102i*sci010101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg021101:= kadsg021101d*CSLg021101*sci000000 -kadsg021101i*sci021101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg102101:= kadsg102101d*CSLg102101*sci000000 -kadsg102101i*sci102101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg121101:= kadsg121101d*CSLg121101*sci000000 -kadsg121101i*sci121101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg122101:= kadsg122101d*CSLg122101*sci000000 -kadsg122101i*sci122101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg140101:= kadsg140101d*CSLg140101*sci000000 -kadsg140101i*sci140101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sradsg141101:= kadsg141101d*CSLg141101*sci000000 -kadsg141101i*sci141101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010001:= kaqu0010001d*sci011101 -kaqu0010001i*sci001101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010002:= kaqu0010002d*sci021101*CSLg010101 -kaqu0010002i*CSLg021101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010003:= kaqu0010003d*sci021101 -kaqu0010003i*sci011101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010004:= kaqu0010004d*sci111102*CSLg010101 -kaqu0010004i*CSLg021101*sci100101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010005:= kaqu0010005d*sci111102 -kaqu0010005i*sci101101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010006:= kaqu0010006d*sci112102*CSLg010101 -kaqu0010006i*CSLg021101*sci101101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010007:= kaqu0010007d*sci112102 -kaqu0010007i*sci102101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010008:= kaqu0010008d*sci121102*CSLg010101 -kaqu0010008i*CSLg021101*sci110101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010009:= kaqu0010009d*sci121102 -kaqu0010009i*sci111101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010010:= kaqu0010010d*sci122101*CSLg010101 -kaqu0010010i*CSLg021101*sci111101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010011:= kaqu0010011d*sci131102*CSLg010101 -kaqu0010011i*sci120101*CSLg021101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010012:= kaqu0010012d*sci131102 -kaqu0010012i*sci121101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010013:= kaqu0010013d*sci141101*CSLg010101 -kaqu0010013i*sci130101*CSLg021101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">sraqu0010014:= kaqu0010014d*sci141101 -kaqu0010014i*sci131101*CSLg010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000001:= krxn0000001d*sci011101*sci000000 -krxn0000001i*sci001101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000002:= krxn0000002d*sci021101*sci000000 -krxn0000002i*sci011101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000003:= krxn0000003d*sci101101*sci000000 -krxn0000003i*sci001101*sci100101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000004:= krxn0000004d*sci102101*sci000000 -krxn0000004i*sci101101*sci001101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000005:= krxn0000005d*sci110101*sci000000 -krxn0000005i*sci100101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000006:= krxn0000006d*sci111101*sci000000 -krxn0000006i*sci101101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000007:= krxn0000007d*sci111101*sci000000 -krxn0000007i*sci110101*sci001101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000008:= krxn0000008d*sci111102*sci000000 -krxn0000008i*sci011101*sci100101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000009:= krxn0000009d*sci111102*sci000000 -krxn0000009i*sci101101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000010:= krxn0000010d*sci112102*sci000000 -krxn0000010i*sci011101*sci101101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000011:= krxn0000011d*sci112102*sci000000 -krxn0000011i*sci102101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000012:= krxn0000012d*sci112102*sci000000 -krxn0000012i*sci111102*sci001101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000013:= krxn0000013d*sci120101*sci000000 -krxn0000013i*sci110101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000014:= krxn0000014d*sci121101*sci000000 -krxn0000014i*sci111101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000015:= krxn0000015d*sci121101*sci000000 -krxn0000015i*sci120101*sci001101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000016:= krxn0000016d*sci121102*sci000000 -krxn0000016i*sci011101*sci110101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000017:= krxn0000017d*sci121102*sci000000 -krxn0000017i*sci111101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000018:= krxn0000018d*sci121102*sci000000 -krxn0000018i*sci111102*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000019:= krxn0000019d*sci122101*sci000000 -krxn0000019i*sci111101*sci011101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000020:= krxn0000020d*sci122101*sci000000 -krxn0000020i*sci112102*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000021:= krxn0000021d*sci122101*sci000000 -krxn0000021i*sci121102*sci001101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000022:= krxn0000022d*sci130101*sci000000 -krxn0000022i*sci120101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000023:= krxn0000023d*sci131101*sci000000 -krxn0000023i*sci121101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000024:= krxn0000024d*sci131101*sci000000 -krxn0000024i*sci130101*sci001101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000025:= krxn0000025d*sci131102*sci000000 -krxn0000025i*sci120101*sci011101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000026:= krxn0000026d*sci131102*sci000000 -krxn0000026i*sci121101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000027:= krxn0000027d*sci131102*sci000000 -krxn0000027i*sci121102*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000028:= krxn0000028d*sci140101*sci000000 -krxn0000028i*sci130101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000029:= krxn0000029d*sci141101*sci000000 -krxn0000029i*sci130101*sci011101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000030:= krxn0000030d*sci141101*sci000000 -krxn0000030i*sci131101*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">srrxn0000031:= krxn0000031d*sci141101*sci000000 -krxn0000031i*sci131102*sci010101  : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"><Font encoding="UTF-8">fprintf(filename1 ,&quot;%q %q\134n&quot;, Cu100 , timei, T, CSLg010101, CSLg011101, CSLg020101, CSLg021101, CSLg102101, CSLg121101, CSLg122101, CSLg140101, CSLg141101 , sci000000, sci001101, sci010101, sci011101, sci020101, sci021101, sci100101, sci101101, sci102101, sci110101, sci111101, sci111102, sci112102, sci120101, sci121101, sci121102, sci122101, sci130101, sci131101, sci131102, sci140101, sci141101 , sradsg010101, sradsg020101, sradsg020102, sradsg021101, sradsg102101, sradsg121101, sradsg122101, sradsg140101, sradsg141101, sraqu0010001, sraqu0010002, sraqu0010003, sraqu0010004, sraqu0010005, sraqu0010006, sraqu0010007, sraqu0010008, sraqu0010009, sraqu0010010, sraqu0010011, sraqu0010012, sraqu0010013, sraqu0010014, srrxn0000001, srrxn0000002, srrxn0000003, srrxn0000004, srrxn0000005, srrxn0000006, srrxn0000007, srrxn0000008, srrxn0000009, srrxn0000010, srrxn0000011, srrxn0000012, srrxn0000013, srrxn0000014, srrxn0000015, srrxn0000016, srrxn0000017, srrxn0000018, srrxn0000019, srrxn0000020, srrxn0000021, srrxn0000022, srrxn0000023, srrxn0000024, srrxn0000025, srrxn0000026, srrxn0000027, srrxn0000028, srrxn0000029, srrxn0000030, srrxn0000031  ): </Font></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">FileTools[Flush](filename1) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">od: </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"> </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal">close(filename1) : </Text-field>
+<Text-field prompt="&gt; " style="Maple Input" layout="Normal"></Text-field>
+</Input>
+</Group>
+</Worksheet>
