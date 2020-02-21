@@ -1,0 +1,30 @@
+[General]                         
+  mapleoutput=test.xls          # Output files
+                                  
+[Reactor]                         
+  reactortype=Differential      #       
+  reactortemp=300               # Temperature in Kelvin
+  time1=[ 1E-15, 1E-12, 1E-9, 1E-6, 1E-3, 1E0, 1E6, 1E6, 1E9, 1E12 ]   # Reaction times   
+# time1=10800                   # Reaction time; If provided, converts time1 in Equilibration time. Not yet supported. 
+  damptime=0                    # Pressure/Concentration damping time in seconds, >1E-13 s. Otherwise no damping.    
+                                   
+[Catalyst]                        
+  name=Cu100                    # 
+  sitebalancespecies=i000000    # Species that will center the site balance. 
+  areaactivesite=6.60125        # Area of active sites in Å².  
+  secondlayerthickness=4.5      # Thickness of 2nd layer in the double b.l. in Å. 
+                                      
+[Electrochemistry]                    
+  electricpotentialrhe=0.05     # In V vs. RHE.   
+  nelectronslabel=ne            # Label that defines the number of electrons. 
+  pH=0.0                        #   
+                                      
+[Pressures]                        
+# g0101=24.615                  # In atmospheres. Remaining species treated as zero.
+# g0201=1.0                     # 
+                                    
+[Concentrations]                # In mol/L. Remaining species treated as zero.     
+  g010101=1.0E-0                # Proton.    
+  g011101=1.0E-14               # Hydroxide.  
+  g020101=750E-6                # 
+
